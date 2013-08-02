@@ -1,0 +1,35 @@
+<table class="collector-gridtable" width="100%">
+    <thead>
+        <tr>
+            <th class="collector-gridtable" width="15%">$i18n.getText("datacollector.usertab")</th>
+            <th class="collector-gridtable" width="85%">$i18n.getText("datacollector.statustab")</th>
+        </tr>
+    </thead>
+    <tbody>
+    #foreach($status in $statusinfo)
+    <tr>
+        <td class="collector-gridtable" width="15%">
+            $helper.renderStatus($status.getStatus())
+        </td>
+        <td class="collector-gridtable" width="85%">
+            <table class="in-collector-gridtable" width="100%">
+                #set($users = $status.getUsers())
+                #foreach($entry in $users.entrySet())
+                <tr>
+                    <td class="in-collector-gridtable" width="20%">
+                        $helper.renderUser($entry.key)
+                    </td>
+                    <td class="in-collector-gridtable" width="80%">
+                        <table>
+                        #foreach($daterange in $entry.value)<tr><td>$helper.renderDate($daterange)</td></tr>#end
+                        <tr><td>$i18n.getText("datacollector.alltime"): $helper.renderSpentTime($status.getUserTime($entry.key))</td></tr>
+                        </table>
+                    </td>
+                </tr>
+                #end
+            </table>
+        </td>
+    </tr>
+    #end
+    </tbody>
+</table>

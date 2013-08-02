@@ -1,0 +1,42 @@
+$webResourceManager.requireResourcesForContext("jira.view.issue")
+<table class="collector-gridtable" width="100%">
+    #foreach($entry in $data.entrySet())
+        <tr>
+            <td class="collector-gridtable">
+                $entry.key
+            </td>
+            <td class="collector-gridtable">
+            #set($userinfo = $entry.value)
+                <table class="collector-gridtable" width="100%">
+    <tbody>
+    #foreach($user in $userinfo)
+    <tr>
+        <td class="collector-gridtable" width="15%">
+            $helper.renderUser($user.getUser())
+        </td>
+        <td class="collector-gridtable" width="85%">
+            <table class="in-collector-gridtable" width="100%">
+                #set($statuses = $user.getStatuses())
+                #foreach($entry in $statuses.entrySet())
+                <tr>
+                    <td class="in-collector-gridtable" width="20%">
+                        $helper.renderStatus($entry.key)
+                    </td>
+                    <td class="in-collector-gridtable" width="80%">
+                        <table>
+                        #foreach($daterange in $entry.value)<tr><td>$helper.renderDate($daterange)</td></tr>#end
+                        <tr><td>$i18n.getText("datacollector.alltime"): $helper.renderSpentTime($user.getStatusTime($entry.key))</td></tr>
+                        </table>
+                    </td>
+                </tr>
+                #end
+            </table>
+        </td>
+    </tr>
+    #end
+    </tbody>
+</table>
+            </td>
+        </tr>
+    #end
+</table>

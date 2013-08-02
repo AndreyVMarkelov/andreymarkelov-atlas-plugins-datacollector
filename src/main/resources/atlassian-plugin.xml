@@ -1,0 +1,58 @@
+<atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.name}" plugins-version="2">
+    <plugin-info>
+        <description>${project.description}</description>
+        <version>${project.version}</version>
+        <vendor name="${project.organization.name}" url="${project.organization.url}" />
+        <param name="plugin-icon">images/pluginIcon.png</param>
+        <param name="plugin-logo">images/pluginLogo.png</param>
+    </plugin-info>
+
+    <!-- add our i18n resource -->
+    <resource type="i18n" name="i18n" location="datacollector"/>
+
+    <report key="datacollector-report" name="Issue History Statistics" class="ru.andreymarkelov.atlas.plugins.datacollector.IssueHistoryCollectorReport">
+        <description key="datacollector.report.desc"/>
+        <label key="datacollector.report"/>
+        <resource type="velocity" name="view" location="templates/collector/datacollector-report.vm"/>
+        <resource type="i18n" name="i18n" location="datacollector"/>
+        <properties>
+            <property>
+                <key>projectId</key>
+                <name>Project</name>
+                <description>report.allissues.project.description</description>
+                <type>select</type>
+                <values class="ru.andreymarkelov.atlas.plugins.datacollector.ProjectValuesGenerator"/>
+            </property>
+        </properties>
+    </report>
+
+    <issue-tabpanel key="user-status-panel" name="User/Status Statistics"
+            i18n-namekey="datacollector.user-status-panel" class="ru.andreymarkelov.atlas.plugins.datacollector.UserCollectorTab">
+        <resource type="i18n" name="i18n" location="datacollector"/>
+        <description>Show Subversion commits related to an issue in an issue tab panel.</description>
+        <label key="datacollector.user-status-panel"/>
+        <resource type="velocity" name="view" location="templates/collector/user-tabcollector.vm"/>
+        <supports-ajax-load>true</supports-ajax-load>
+    </issue-tabpanel>
+
+    <issue-tabpanel key="status-user-panel" name="Status/User Statistics"
+            i18n-namekey="datacollector.status-user-panel" class="ru.andreymarkelov.atlas.plugins.datacollector.StatusCollectorTab">
+        <resource type="i18n" name="i18n" location="datacollector"/>
+        <description>Show Subversion commits related to an issue in an issue tab panel.</description>
+        <label key="datacollector.status-user-panel"/>
+        <resource type="velocity" name="view" location="templates/collector/status-tabcollector.vm"/>
+        <supports-ajax-load>true</supports-ajax-load>
+    </issue-tabpanel>
+
+    <!-- add our web resources -->
+    <web-resource key="datacollector-resources" name="datacollector Web Resources">
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <resource type="download" name="datacollector.css" location="/css/datacollector.css"/>
+        <resource type="download" name="datacollector.js" location="/js/datacollector.js"/>
+        <resource type="download" name="images/" location="/images"/>
+        <context>jira.view.issue</context>
+    </web-resource>
+
+    <!-- import from the product container -->
+    <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties" />
+</atlassian-plugin>
