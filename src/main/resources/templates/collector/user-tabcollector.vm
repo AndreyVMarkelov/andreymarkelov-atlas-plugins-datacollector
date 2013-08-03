@@ -2,7 +2,7 @@
     <thead>
         <tr>
             <th class="collector-gridtable" width="15%">$i18n.getText("datacollector.usertab")</th>
-            <th class="collector-gridtable" width="85%">$i18n.getText("datacollector.statustab")</th>
+            <th class="collector-gridtable" width="85%">$i18n.getText("datacollector.timestatustab")</th>
         </tr>
     </thead>
     <tbody>

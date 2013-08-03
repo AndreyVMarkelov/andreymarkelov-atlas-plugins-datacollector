@@ -2,6 +2,7 @@ package ru.andreymarkelov.atlas.plugins.datacollector;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -14,7 +15,7 @@ public class CollectorUtils {
     public static String getInitialStatus(List<ChangeHistoryItem> items, Issue issue) {
         for (ChangeHistoryItem item : items) {
             if (item.getField().equals("status")) {
-                return item.getFroms().values().iterator().next();
+                return item.getFroms().keySet().iterator().next();
             }
         }
         return issue.getStatusObject().getName();
@@ -51,8 +52,8 @@ public class CollectorUtils {
             if (item.getField().equals("status")) {
                 Map<String, String> from = item.getFroms();
                 Map<String, String> to = item.getTos();
-                statuses.add(from.values().iterator().next());
-                statuses.add(to.values().iterator().next());
+                statuses.add(from.keySet().iterator().next());
+                statuses.add(to.keySet().iterator().next());
             }
         }
         return statuses;
@@ -67,14 +68,14 @@ public class CollectorUtils {
                     ranges.add(new StatusDateRange(new Date(issue.getCreated().getTime()), new Date(item.getCreated().getTime()), getInitialStatus(items, issue)));
                     isFirst = false;
                 } else {
-                    ranges.add(new StatusDateRange(ranges.get(ranges.size() - 1).getTo(), new Date(item.getCreated().getTime()), item.getFroms().values().iterator().next()));
+                    ranges.add(new StatusDateRange(ranges.get(ranges.size() - 1).getTo(), new Date(item.getCreated().getTime()), item.getFroms().keySet().iterator().next()));
                 }
             }
         }
         if (ranges.isEmpty()) {
             ranges.add(new StatusDateRange(new Date(issue.getCreated().getTime()), new Date(), getInitialStatus(items, issue)));
         } else {
-            ranges.add(new StatusDateRange(ranges.get(ranges.size() - 1).getTo(), new Date(), issue.getStatusObject().getName()));
+            ranges.add(new StatusDateRange(ranges.get(ranges.size() - 1).getTo(), new Date(), issue.getStatusObject().getId()));
         }
 
         return ranges;
@@ -130,8 +131,8 @@ public class CollectorUtils {
             if (item.getField().equals("assignee")) {
                 Map<String, String> from = item.getFroms();
                 Map<String, String> to = item.getTos();
-                users.add(from.values().iterator().next());
-                users.add(to.values().iterator().next());
+                users.add(from.keySet().iterator().next());
+                users.add(to.keySet().iterator().next());
             }
         }
         return users;
@@ -157,6 +158,30 @@ public class CollectorUtils {
             userStatusesList.add(userStatuses);
         }
         return userStatusesList;
+    }
+
+    public static List<StatusUsers> reduceStatusUsers(List<StatusUsers> statusUsers, List<String> statusIds) {
+        Iterator<StatusUsers> iter = statusUsers.iterator();
+        while (iter.hasNext()) {
+            StatusUsers su = iter.next();
+            if (!statusIds.contains(su.getStatus())) {
+                iter.remove();
+            }
+        }
+        return statusUsers;
+    }
+
+    public static List<UserStatuses> reduceUserStatuses(List<UserStatuses> userStatuses, List<String> statusIds) {
+        for (UserStatuses us : userStatuses) {
+            Iterator<String> iter = us.getStatuses().keySet().iterator();
+            while (iter.hasNext()) {
+                String status = iter.next();
+                if (!statusIds.contains(status)) {
+                    iter.remove();
+                }
+            }
+        }
+        return userStatuses;
     }
 
     private CollectorUtils() {

@@ -18,10 +18,38 @@
         <properties>
             <property>
                 <key>projectId</key>
-                <name>Project</name>
-                <description>report.allissues.project.description</description>
+                <name>datacollector.report.project</name>
+                <description>datacollector.report.project.desc</description>
                 <type>select</type>
                 <values class="ru.andreymarkelov.atlas.plugins.datacollector.ProjectValuesGenerator"/>
+            </property>
+            <property>
+                <key>creationWeeks</key>
+                <name>datacollector.report.date.desc</name>
+                <description>datacollector.report.date</description>
+                <type>long</type>
+                <default>4</default>
+            </property>
+            <property>
+                <key>groupField</key>
+                <name>datacollector.report.groupfield</name>
+                <description>datacollector.report.groupfield.desc</description>
+                <type>select</type>
+                <values class="ru.andreymarkelov.atlas.plugins.datacollector.GrouperValuesGenerator"/>
+            </property>
+            <property>
+                <key>statusIds</key>
+                <name>datacollector.report.statuses</name>
+                <description>datacollector.report.statuses.desc</description>
+                <type>multiselect</type>
+                <values class="ru.andreymarkelov.atlas.plugins.datacollector.StatusValuesGenerator"/>
+            </property>
+            <property>
+                <key>userstatus</key>
+                <name>datacollector.report.userstatus</name>
+                <description>datacollector.report.userstatus.desc</description>
+                <type>checkbox</type>
+                <default>true</default>
             </property>
         </properties>
     </report>

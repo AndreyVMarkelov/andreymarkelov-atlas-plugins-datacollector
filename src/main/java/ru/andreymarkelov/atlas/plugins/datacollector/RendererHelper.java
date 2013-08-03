@@ -33,7 +33,7 @@ public class RendererHelper {
     }
 
     public String renderStatus(String status) {
-        Status statusObj = constMgr.getStatusByName(status);
+        Status statusObj = constMgr.getStatusObject(status);
         if (statusObj != null) {
             StringBuilder sb = new StringBuilder();
             sb.append("<span class=\"value\">");

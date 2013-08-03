@@ -1,8 +1,8 @@
 <table class="collector-gridtable" width="100%">
     <thead>
         <tr>
-            <th class="collector-gridtable" width="15%">$i18n.getText("datacollector.usertab")</th>
-            <th class="collector-gridtable" width="85%">$i18n.getText("datacollector.statustab")</th>
+            <th class="collector-gridtable" width="15%">$i18n.getText("datacollector.statustab")</th>
+            <th class="collector-gridtable" width="85%">$i18n.getText("datacollector.timeusertab")</th>
         </tr>
     </thead>
     <tbody>
