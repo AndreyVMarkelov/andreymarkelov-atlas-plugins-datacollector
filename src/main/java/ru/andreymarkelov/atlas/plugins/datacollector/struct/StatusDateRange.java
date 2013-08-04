@@ -1,6 +1,7 @@
-package ru.andreymarkelov.atlas.plugins.datacollector;
+package ru.andreymarkelov.atlas.plugins.datacollector.struct;
 
 import java.util.Date;
+
 
 public class StatusDateRange extends DateRange {
     private String status;

@@ -3,6 +3,8 @@ package ru.andreymarkelov.atlas.plugins.datacollector;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import ru.andreymarkelov.atlas.plugins.datacollector.struct.DateRange;
+
 import com.atlassian.core.util.DateUtils;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.component.ComponentAccessor;
@@ -47,6 +49,15 @@ public class RendererHelper {
         }
     }
 
+    public String renderStatusRaw(String status) {
+        Status statusObj = constMgr.getStatusObject(status);
+        if (statusObj != null) {
+            return statusObj.getNameTranslation();
+        } else {
+            return status;
+        }
+    }
+
     public String renderUser(String user) {
         User userObj = userMgr.getUserObject(user);
         if (userObj != null) {
@@ -63,6 +74,15 @@ public class RendererHelper {
             sb.append("' href='/secure/ViewProfile.jspa?name='").append(encodedUser).append("'>");
             sb.append(userObj.getDisplayName()).append("</a>");
             return sb.toString();
+        } else {
+            return user;
+        }
+    }
+
+    public String renderUserRaw(String user) {
+        User userObj = userMgr.getUserObject(user);
+        if (userObj != null) {
+            return userObj.getDisplayName();
         } else {
             return user;
         }

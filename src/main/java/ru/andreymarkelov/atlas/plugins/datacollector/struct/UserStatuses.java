@@ -1,8 +1,9 @@
-package ru.andreymarkelov.atlas.plugins.datacollector;
+package ru.andreymarkelov.atlas.plugins.datacollector.struct;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 public class UserStatuses {
     private String user;

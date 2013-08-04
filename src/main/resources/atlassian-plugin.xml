@@ -3,8 +3,8 @@
         <description>${project.description}</description>
         <version>${project.version}</version>
         <vendor name="${project.organization.name}" url="${project.organization.url}" />
-        <param name="plugin-icon">images/pluginIcon.png</param>
-        <param name="plugin-logo">images/pluginLogo.png</param>
+        <param name="plugin-icon">images/icon.png</param>
+        <param name="plugin-logo">images/logo.png</param>
     </plugin-info>
 
     <!-- add our i18n resource -->
@@ -14,6 +14,7 @@
         <description key="datacollector.report.desc"/>
         <label key="datacollector.report"/>
         <resource type="velocity" name="view" location="templates/collector/datacollector-report.vm"/>
+        <resource type="velocity" name="excel" location="templates/collector/datacollector-report-excel.vm"/>
         <resource type="i18n" name="i18n" location="datacollector"/>
         <properties>
             <property>

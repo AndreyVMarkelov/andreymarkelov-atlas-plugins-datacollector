@@ -9,15 +9,16 @@ table.collector-gridtable {
 
 th.collector-gridtable {
     border-width: 1px;
-    padding: 8px;
+    padding: 5px;
     border-style: solid;
     border-color: #666666;
     background-color: #dedede;
 }
 
 td.collector-gridtable {
+    word-break:break-all;
     border-width: 1px;
-    padding: 8px;
+    padding: 5px;
     border-style: solid;
     border-color: #666666;
     background-color: #ffffff;
@@ -34,7 +35,7 @@ table.in-collector-gridtable {
 
 td.in-collector-gridtable {
     border-width: 1px;
-    padding: 8px;
+    padding: 5px;
     border-style: solid;
     border-color: #666666;
     background-color: #ffffff;

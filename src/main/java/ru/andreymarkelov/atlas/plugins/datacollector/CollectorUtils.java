@@ -8,6 +8,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import ru.andreymarkelov.atlas.plugins.datacollector.struct.DateRange;
+import ru.andreymarkelov.atlas.plugins.datacollector.struct.StatusDateRange;
+import ru.andreymarkelov.atlas.plugins.datacollector.struct.StatusUsers;
+import ru.andreymarkelov.atlas.plugins.datacollector.struct.Statuses;
+import ru.andreymarkelov.atlas.plugins.datacollector.struct.UserDateRange;
+import ru.andreymarkelov.atlas.plugins.datacollector.struct.UserStatuses;
+import ru.andreymarkelov.atlas.plugins.datacollector.struct.Users;
+
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.changehistory.ChangeHistoryItem;
 
@@ -18,7 +26,7 @@ public class CollectorUtils {
                 return item.getFroms().keySet().iterator().next();
             }
         }
-        return issue.getStatusObject().getName();
+        return issue.getStatusObject().getId();
     }
 
     public static String getInitialUser(List<ChangeHistoryItem> items, Issue issue) {
@@ -172,13 +180,18 @@ public class CollectorUtils {
     }
 
     public static List<UserStatuses> reduceUserStatuses(List<UserStatuses> userStatuses, List<String> statusIds) {
-        for (UserStatuses us : userStatuses) {
+        Iterator<UserStatuses> usIter = userStatuses.iterator();
+        while (usIter.hasNext()) {
+            UserStatuses us = usIter.next();
             Iterator<String> iter = us.getStatuses().keySet().iterator();
             while (iter.hasNext()) {
                 String status = iter.next();
                 if (!statusIds.contains(status)) {
                     iter.remove();
                 }
+            }
+            if (us.getStatuses().isEmpty()) {
+                usIter.remove();
             }
         }
         return userStatuses;

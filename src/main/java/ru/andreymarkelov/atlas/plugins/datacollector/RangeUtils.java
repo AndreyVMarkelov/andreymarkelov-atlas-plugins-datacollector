@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import ru.andreymarkelov.atlas.plugins.datacollector.struct.DateRange;
+
 public class RangeUtils {
     public static DateRange getIntersectionRange(DateRange dr1, DateRange dr2) {
         Date minEnd = min(dr1.getTo(), dr2.getTo());

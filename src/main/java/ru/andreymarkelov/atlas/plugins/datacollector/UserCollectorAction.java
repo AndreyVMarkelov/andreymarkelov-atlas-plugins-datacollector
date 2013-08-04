@@ -4,6 +4,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import ru.andreymarkelov.atlas.plugins.datacollector.struct.Statuses;
+import ru.andreymarkelov.atlas.plugins.datacollector.struct.Users;
+
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.changehistory.ChangeHistoryItem;

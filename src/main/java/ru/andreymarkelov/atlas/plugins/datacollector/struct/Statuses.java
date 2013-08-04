@@ -1,9 +1,10 @@
-package ru.andreymarkelov.atlas.plugins.datacollector;
+package ru.andreymarkelov.atlas.plugins.datacollector.struct;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 public class Statuses {
     private Map<String, List<DateRange>> statuses;
