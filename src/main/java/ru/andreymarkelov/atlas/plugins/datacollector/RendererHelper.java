@@ -42,7 +42,7 @@ public class RendererHelper {
             sb.append("<img src=\"").append(baseUrl).append(statusObj.getIconUrlHtml());
             sb.append("\" width=\"16\" height=\"16\" title=\"").append(statusObj.getDescTranslation());
             sb.append("\" alt=\"").append(statusObj.getDescTranslation()).append("\"/>");
-            sb.append(statusObj.getNameTranslation()).append("</span>");
+            sb.append(statusObj.getNameTranslation(context.getI18nHelper())).append("</span>");
             return sb.toString();
         } else {
             return status;
@@ -52,7 +52,7 @@ public class RendererHelper {
     public String renderStatusRaw(String status) {
         Status statusObj = constMgr.getStatusObject(status);
         if (statusObj != null) {
-            return statusObj.getNameTranslation();
+            return statusObj.getNameTranslation(context.getI18nHelper());
         } else {
             return status;
         }

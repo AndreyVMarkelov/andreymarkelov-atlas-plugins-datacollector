@@ -25,7 +25,7 @@ import com.atlassian.jira.util.ParameterUtils;
 import com.atlassian.jira.web.action.ProjectActionSupport;
 import com.atlassian.jira.web.bean.PagerFilter;
 
-public class IssueHistoryCollectorReport extends AbstractReport {
+public class CollectorIssueHistoryReportAM extends AbstractReport {
     @Override
     public String generateReportExcel(ProjectActionSupport action, Map reqParams) throws Exception {
         return descriptor.getHtml("excel", getVelocityParams(action, reqParams));
@@ -52,6 +52,10 @@ public class IssueHistoryCollectorReport extends AbstractReport {
         Long creationWeeks = ParameterUtils.getLongParam(reqParams, "creationWeeks");
         String grouperId = ParameterUtils.getStringParam(reqParams, "groupField");
         List<String> statusIds = ParameterUtils.getListParam(reqParams, "statusIds");
+        if (statusIds == null || statusIds.isEmpty()) {
+            statusIds = new ArrayList<String>();
+            statusIds.add(ParameterUtils.getStringParam(reqParams, "statusIds"));
+        }
         boolean isUserStatus = ParameterUtils.getBooleanParam(reqParams, "userstatus");
 
         final Map<String, Object> velocityParams = new HashMap<String, Object>();
@@ -135,7 +139,10 @@ public class IssueHistoryCollectorReport extends AbstractReport {
         }
         List<String> statusIds = ParameterUtils.getListParam(params, "statusIds");
         if (statusIds == null || statusIds.isEmpty()) {
-            action.addError("statusIds", ComponentAccessor.getJiraAuthenticationContext().getI18nHelper().getText("datacollector.report.statuses.error"));
+            String statusId = ParameterUtils.getStringParam(params, "statusIds");
+            if (statusId == null) {
+                action.addError("statusIds", ComponentAccessor.getJiraAuthenticationContext().getI18nHelper().getText("datacollector.report.statuses.error"));
+            }
         }
         super.validate(action, params);
     }

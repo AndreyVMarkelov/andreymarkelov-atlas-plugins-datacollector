@@ -23,7 +23,11 @@ public class CollectorUtils {
     public static String getInitialStatus(List<ChangeHistoryItem> items, Issue issue) {
         for (ChangeHistoryItem item : items) {
             if (item.getField().equals("status")) {
-                return item.getFroms().keySet().iterator().next();
+                if (!item.getFroms().isEmpty()) {
+                    return item.getFroms().keySet().iterator().next();
+                } else {
+                    return "unknown";
+                }
             }
         }
         return issue.getStatusObject().getId();
@@ -32,7 +36,11 @@ public class CollectorUtils {
     public static String getInitialUser(List<ChangeHistoryItem> items, Issue issue) {
         for (ChangeHistoryItem item : items) {
             if (item.getField().equals("assignee")) {
-                return item.getFroms().keySet().iterator().next();
+                if (!item.getFroms().isEmpty()) {
+                    return item.getFroms().keySet().iterator().next();
+                } else {
+                    return "unknown";
+                }
             }
         }
         return issue.getAssigneeId();
@@ -60,33 +68,48 @@ public class CollectorUtils {
             if (item.getField().equals("status")) {
                 Map<String, String> from = item.getFroms();
                 Map<String, String> to = item.getTos();
-                statuses.add(from.keySet().iterator().next());
-                statuses.add(to.keySet().iterator().next());
+                if (!from.isEmpty()) {
+                    statuses.add(from.keySet().iterator().next());
+                } else {
+                    statuses.add("unknown");
+                }
+                if (!to.isEmpty()) {
+                    statuses.add(to.keySet().iterator().next());
+                } else {
+                    statuses.add("unknown");
+                }
             }
         }
         return statuses;
     }
 
     public static List<StatusDateRange> getStatusRanges(List<ChangeHistoryItem> items, Issue issue) {
-        List<StatusDateRange> ranges = new ArrayList<StatusDateRange>();
-        boolean isFirst = true;
-        for (ChangeHistoryItem item : items) {
-            if (item.getField().equals("status")) {
-                if (isFirst) {
-                    ranges.add(new StatusDateRange(new Date(issue.getCreated().getTime()), new Date(item.getCreated().getTime()), getInitialStatus(items, issue)));
-                    isFirst = false;
-                } else {
-                    ranges.add(new StatusDateRange(ranges.get(ranges.size() - 1).getTo(), new Date(item.getCreated().getTime()), item.getFroms().keySet().iterator().next()));
+        try {
+            List<StatusDateRange> ranges = new ArrayList<StatusDateRange>();
+            boolean isFirst = true;
+            for (ChangeHistoryItem item : items) {
+                if (item.getField().equals("status")) {
+                    if (isFirst) {
+                        ranges.add(new StatusDateRange(new Date(issue.getCreated().getTime()), new Date(item.getCreated().getTime()), getInitialStatus(items, issue)));
+                        isFirst = false;
+                    } else {
+                        if (!item.getFroms().isEmpty()) {
+                            ranges.add(new StatusDateRange(ranges.get(ranges.size() - 1).getTo(), new Date(item.getCreated().getTime()), item.getFroms().keySet().iterator().next()));
+                        } else {
+                            ranges.add(new StatusDateRange(ranges.get(ranges.size() - 1).getTo(), new Date(item.getCreated().getTime()), "unknown"));
+                        }
+                    }
                 }
             }
+            if (ranges.isEmpty()) {
+                ranges.add(new StatusDateRange(new Date(issue.getCreated().getTime()), new Date(), getInitialStatus(items, issue)));
+            } else {
+                ranges.add(new StatusDateRange(ranges.get(ranges.size() - 1).getTo(), new Date(), issue.getStatusObject().getId()));
+            }
+            return ranges;
+        } catch (Exception ex) {
+            throw new RuntimeException("Issue: " + issue.getKey(), ex);
         }
-        if (ranges.isEmpty()) {
-            ranges.add(new StatusDateRange(new Date(issue.getCreated().getTime()), new Date(), getInitialStatus(items, issue)));
-        } else {
-            ranges.add(new StatusDateRange(ranges.get(ranges.size() - 1).getTo(), new Date(), issue.getStatusObject().getId()));
-        }
-
-        return ranges;
     }
 
     public static List<StatusUsers> getStatusUsers(Users users, Statuses statuses) {
@@ -112,25 +135,32 @@ public class CollectorUtils {
     }
 
     public static List<UserDateRange> getUserRanges(List<ChangeHistoryItem> items, Issue issue) {
-        List<UserDateRange> ranges = new ArrayList<UserDateRange>();
-        boolean isFirst = true;
-        for (ChangeHistoryItem item : items) {
-            if (item.getField().equals("assignee")) {
-                if (isFirst) {
-                    ranges.add(new UserDateRange(new Date(issue.getCreated().getTime()), new Date(item.getCreated().getTime()), getInitialUser(items, issue)));
-                    isFirst = false;
-                } else {
-                    ranges.add(new UserDateRange(ranges.get(ranges.size() - 1).getTo(), new Date(item.getCreated().getTime()), item.getFroms().keySet().iterator().next()));
+        try {
+            List<UserDateRange> ranges = new ArrayList<UserDateRange>();
+            boolean isFirst = true;
+            for (ChangeHistoryItem item : items) {
+                if (item.getField().equals("assignee")) {
+                    if (isFirst) {
+                        ranges.add(new UserDateRange(new Date(issue.getCreated().getTime()), new Date(item.getCreated().getTime()), getInitialUser(items, issue)));
+                        isFirst = false;
+                    } else {
+                        if (!item.getFroms().isEmpty()) {
+                            ranges.add(new UserDateRange(ranges.get(ranges.size() - 1).getTo(), new Date(item.getCreated().getTime()), item.getFroms().keySet().iterator().next()));
+                        } else {
+                            ranges.add(new UserDateRange(ranges.get(ranges.size() - 1).getTo(), new Date(item.getCreated().getTime()), "unknown"));
+                        }
+                    }
                 }
             }
+            if (ranges.isEmpty()) {
+                ranges.add(new UserDateRange(new Date(issue.getCreated().getTime()), new Date(), getInitialUser(items, issue)));
+            } else {
+                ranges.add(new UserDateRange(ranges.get(ranges.size() - 1).getTo(), new Date(), issue.getAssignee().getName()));
+            }
+            return ranges;
+        } catch (Exception ex) {
+            throw new RuntimeException("Issue: " + issue.getKey(), ex);
         }
-        if (ranges.isEmpty()) {
-            ranges.add(new UserDateRange(new Date(issue.getCreated().getTime()), new Date(), getInitialUser(items, issue)));
-        } else {
-            ranges.add(new UserDateRange(ranges.get(ranges.size() - 1).getTo(), new Date(), issue.getAssignee().getName()));
-        }
-
-        return ranges;
     }
 
     public static Set<String> getUsers(List<ChangeHistoryItem> items) {
@@ -139,8 +169,16 @@ public class CollectorUtils {
             if (item.getField().equals("assignee")) {
                 Map<String, String> from = item.getFroms();
                 Map<String, String> to = item.getTos();
-                users.add(from.keySet().iterator().next());
-                users.add(to.keySet().iterator().next());
+                if (!from.isEmpty()) {
+                    users.add(from.keySet().iterator().next());
+                } else {
+                    users.add("unknown");
+                }
+                if (!to.isEmpty()) {
+                    users.add(to.keySet().iterator().next());
+                } else {
+                    users.add("unknown");
+                }
             }
         }
         return users;
