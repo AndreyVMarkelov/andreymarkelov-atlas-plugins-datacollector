@@ -8,6 +8,7 @@ $webResourceManager.requireResourcesForContext("jira.view.issue")
         </tr>
     </thead>
     #foreach($issueGroup in $issueGroups.entrySet())
+    
     <tr>
         <td class="collector-gridtable" width="20%">
             $issueGroup.key
@@ -16,6 +17,7 @@ $webResourceManager.requireResourcesForContext("jira.view.issue")
             <table class="collector-gridtable" width="100%">
                 #foreach($issuegroup in $issueGroup.value)
                 #set($idata = $data.get($issuegroup))
+                #if($idata)
                 <tr>
                     <td class="collector-gridtable" width="30%">
                         <a href="../browse/$issuegroup">$idata.display()</a>
@@ -86,6 +88,7 @@ $webResourceManager.requireResourcesForContext("jira.view.issue")
                         #end
                     </td>
                 </tr>
+                #end
                 #end
             </table>
         </td>
