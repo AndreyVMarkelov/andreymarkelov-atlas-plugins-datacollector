@@ -10,7 +10,7 @@
     <!-- add our i18n resource -->
     <resource type="i18n" name="i18n" location="datacollector"/>
 
-    <report key="datacollector-issuehistory-report-am" name="Issue History Statistics" class="ru.andreymarkelov.atlas.plugins.datacollector.CollectorIssueHistoryReportAM">
+    <report key="am-datacollector-issuehistory-report" name="Issue History Statistics" class="ru.andreymarkelov.atlas.plugins.datacollector.CollectorIssueHistoryReport">
         <description key="datacollector.report.desc"/>
         <label key="datacollector.report"/>
         <resource type="velocity" name="view" location="templates/collector/datacollector-report.vm"/>
@@ -38,6 +38,12 @@
                 <type>select</type>
                 <values class="ru.andreymarkelov.atlas.plugins.datacollector.GrouperValuesGenerator"/>
                 <default>null</default>
+            </property>
+            <property>
+                <key>groupFieldValue</key>
+                <name>datacollector.report.groupfieldvalue</name>
+                <description>datacollector.report.groupfieldvalue.desc</description>
+                <type>string</type>
             </property>
             <property>
                 <key>statusIds</key>

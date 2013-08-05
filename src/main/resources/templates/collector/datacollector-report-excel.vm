@@ -1,5 +1,5 @@
 $webResourceManager.requireResourcesForContext("jira.view.issue")
-#if($issueGroups.size() > 1) ## with groups
+#if($cfName) ## with groups
 <table border="1" width="100%">
     <thead>
         <tr>

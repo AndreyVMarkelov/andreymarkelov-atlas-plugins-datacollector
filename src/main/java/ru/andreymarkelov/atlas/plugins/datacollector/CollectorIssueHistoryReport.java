@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+
 import ru.andreymarkelov.atlas.plugins.datacollector.struct.IssueDataKeeper;
 import ru.andreymarkelov.atlas.plugins.datacollector.struct.StatusUsers;
 import ru.andreymarkelov.atlas.plugins.datacollector.struct.Statuses;
@@ -25,7 +27,7 @@ import com.atlassian.jira.util.ParameterUtils;
 import com.atlassian.jira.web.action.ProjectActionSupport;
 import com.atlassian.jira.web.bean.PagerFilter;
 
-public class CollectorIssueHistoryReportAM extends AbstractReport {
+public class CollectorIssueHistoryReport extends AbstractReport {
     @Override
     public String generateReportExcel(ProjectActionSupport action, Map reqParams) throws Exception {
         return descriptor.getHtml("excel", getVelocityParams(action, reqParams));
@@ -51,6 +53,7 @@ public class CollectorIssueHistoryReportAM extends AbstractReport {
         Long projectId = ParameterUtils.getLongParam(reqParams, "projectId");
         Long creationWeeks = ParameterUtils.getLongParam(reqParams, "creationWeeks");
         String grouperId = ParameterUtils.getStringParam(reqParams, "groupField");
+        String grouperValue = ParameterUtils.getStringParam(reqParams, "groupFieldValue");
         List<String> statusIds = ParameterUtils.getListParam(reqParams, "statusIds");
         if (statusIds == null || statusIds.isEmpty()) {
             statusIds = new ArrayList<String>();
@@ -76,6 +79,10 @@ public class CollectorIssueHistoryReportAM extends AbstractReport {
                 for (Issue issue : issues) {
                     Object cfVal = cf.getValue(issue);
                     if (cfVal != null) {
+                        if (!StringUtils.isEmpty(grouperValue) && !grouperValue.trim().equals(cfVal.toString())) {
+                            continue;
+                        }
+
                         if (issueGroups.containsKey(cfVal.toString())) {
                             issueGroups.get(cfVal.toString()).add(issue.getKey());
                         } else {
@@ -105,14 +112,18 @@ public class CollectorIssueHistoryReportAM extends AbstractReport {
                         new Users(CollectorUtils.getUserRanges(items, issue)),
                         new Statuses(CollectorUtils.getStatusRanges(items, issue))),
                     statusIds);
-                data.put(issue.getKey(), new IssueDataKeeper(issue.getKey(), issue.getSummary(), userStatuses));
+                if (!userStatuses.isEmpty()) {
+                    data.put(issue.getKey(), new IssueDataKeeper(issue.getKey(), issue.getSummary(), userStatuses));
+                }
             } else {
                 List<StatusUsers> statusUsers = CollectorUtils.reduceStatusUsers(
                     CollectorUtils.getStatusUsers(
                         new Users(CollectorUtils.getUserRanges(items, issue)),
                         new Statuses(CollectorUtils.getStatusRanges(items, issue))),
                     statusIds);
-                data.put(issue.getKey(), new IssueDataKeeper(issue.getKey(), issue.getSummary(), statusUsers));
+                if (!statusUsers.isEmpty()) {
+                    data.put(issue.getKey(), new IssueDataKeeper(issue.getKey(), issue.getSummary(), statusUsers));
+                }
             }
         }
 
