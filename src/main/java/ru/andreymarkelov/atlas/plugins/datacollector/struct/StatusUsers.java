@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class StatusUsers {
+public class StatusUsers implements ICalculatedTotal {
     private String status;
     private Map<String, List<DateRange>> users;
 
@@ -30,6 +30,7 @@ public class StatusUsers {
         return status;
     }
 
+    @Override
     public long getTotalTime() {
         long totalTime = 0;
         for (Map.Entry<String, List<DateRange>> entry : users.entrySet()) {

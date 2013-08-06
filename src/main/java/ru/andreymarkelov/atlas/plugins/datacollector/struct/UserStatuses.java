@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class UserStatuses {
+public class UserStatuses implements ICalculatedTotal {
     private String user;
     private Map<String, List<DateRange>> statuses;
 
@@ -38,6 +38,7 @@ public class UserStatuses {
         return getRangesTime(statuses.get(status));
     }
 
+    @Override
     public long getTotalTime() {
         long totalTime = 0;
         for (Map.Entry<String, List<DateRange>> entry : statuses.entrySet()) {

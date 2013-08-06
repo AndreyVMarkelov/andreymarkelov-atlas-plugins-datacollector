@@ -25,11 +25,10 @@
                 <values class="ru.andreymarkelov.atlas.plugins.datacollector.ProjectValuesGenerator"/>
             </property>
             <property>
-                <key>creationWeeks</key>
+                <key>startDate</key>
                 <name>datacollector.report.date.desc</name>
                 <description>datacollector.report.date</description>
-                <type>long</type>
-                <default>4</default>
+                <type>date</type>
             </property>
             <property>
                 <key>groupField</key>

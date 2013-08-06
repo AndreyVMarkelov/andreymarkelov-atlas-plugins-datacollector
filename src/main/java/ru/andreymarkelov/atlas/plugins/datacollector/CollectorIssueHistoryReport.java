@@ -1,7 +1,8 @@
 package ru.andreymarkelov.atlas.plugins.datacollector;
 
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import ru.andreymarkelov.atlas.plugins.datacollector.struct.Statuses;
 import ru.andreymarkelov.atlas.plugins.datacollector.struct.UserStatuses;
 import ru.andreymarkelov.atlas.plugins.datacollector.struct.Users;
 
+import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.ComponentManager;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.Issue;
@@ -23,8 +25,10 @@ import com.atlassian.jira.issue.search.SearchException;
 import com.atlassian.jira.issue.search.SearchResults;
 import com.atlassian.jira.jql.builder.JqlQueryBuilder;
 import com.atlassian.jira.plugin.report.impl.AbstractReport;
+import com.atlassian.jira.util.I18nHelper;
 import com.atlassian.jira.util.ParameterUtils;
 import com.atlassian.jira.web.action.ProjectActionSupport;
+import com.atlassian.jira.web.bean.I18nBean;
 import com.atlassian.jira.web.bean.PagerFilter;
 
 public class CollectorIssueHistoryReport extends AbstractReport {
@@ -38,20 +42,20 @@ public class CollectorIssueHistoryReport extends AbstractReport {
         return descriptor.getHtml("view", getVelocityParams(action, reqParams));
     }
 
-    private List<Issue> getIssuesFromProject(Long pid, Long creationWeeks) throws SearchException {
-        Calendar c = Calendar.getInstance();
-        c.add(Calendar.WEEK_OF_YEAR, (-1) * creationWeeks.intValue());
-
+    private List<Issue> getIssuesFromProject(Long pid, Date startDate) throws SearchException {
         SearchResults results = ComponentManager.getInstance().getSearchService().search(
             ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser(),
-            JqlQueryBuilder.newBuilder().where().project(pid).and().createdAfter(c.getTime()).buildQuery(),
+            JqlQueryBuilder.newBuilder().where().project(pid).and().createdAfter(startDate).buildQuery(),
             PagerFilter.getUnlimitedFilter());
         return results.getIssues();
     }
 
     private Map<String, Object> getVelocityParams(ProjectActionSupport action, Map reqParams) throws SearchException {
+        User remoteUser = action.getRemoteUser();
+        I18nHelper i18nBean = new I18nBean(remoteUser);
+        Date startDate = ParameterUtils.getDateParam(reqParams, "startDate", i18nBean.getLocale());
+
         Long projectId = ParameterUtils.getLongParam(reqParams, "projectId");
-        Long creationWeeks = ParameterUtils.getLongParam(reqParams, "creationWeeks");
         String grouperId = ParameterUtils.getStringParam(reqParams, "groupField");
         String grouperValue = ParameterUtils.getStringParam(reqParams, "groupFieldValue");
         List<String> statusIds = ParameterUtils.getListParam(reqParams, "statusIds");
@@ -71,9 +75,9 @@ public class CollectorIssueHistoryReport extends AbstractReport {
         velocityParams.put("helper", new RendererHelper());
 
         Map<String, List<String>> issueGroups = new HashMap<String, List<String>>();
-        Map<String, Object> data = new HashMap<String, Object>();
+        Map<String, IssueDataKeeper> data = new HashMap<String, IssueDataKeeper>();
 
-        List<Issue> issues = getIssuesFromProject(projectId, creationWeeks);
+        List<Issue> issues = getIssuesFromProject(projectId, startDate);
         if (!grouperId.equals("null")) {
             CustomField cf = ComponentAccessor.getCustomFieldManager().getCustomFieldObject(grouperId);
             if (cf != null) {
@@ -93,7 +97,7 @@ public class CollectorIssueHistoryReport extends AbstractReport {
                             issueGroups.put(cfVal.toString(), keys);
                         }
                         issueGroups.get(cfVal.toString());
-                    } else {
+                    } else if (StringUtils.isEmpty(grouperValue)) {
                         if (issueGroups.containsKey("noGroupValue")) {
                             issueGroups.get("noGroupValue").add(issue.getKey());
                         } else {
@@ -129,9 +133,18 @@ public class CollectorIssueHistoryReport extends AbstractReport {
             }
         }
 
+        velocityParams.put("totalData", getTotalTime(data.values()));
         velocityParams.put("issueGroups", issueGroups);
         velocityParams.put("data", data);
         return velocityParams;
+    }
+
+    public long getTotalTime(Collection<IssueDataKeeper> items) {
+        long totalTime = 0;
+        for (IssueDataKeeper idk : items) {
+            totalTime += idk.getTotalTime();
+        }
+        return totalTime;
     }
 
     @Override
@@ -146,10 +159,6 @@ public class CollectorIssueHistoryReport extends AbstractReport {
 
     @Override
     public void validate(ProjectActionSupport action, Map params) {
-        Long creationWeeks = ParameterUtils.getLongParam(params, "creationWeeks");
-        if (creationWeeks == null || creationWeeks <= 0) {
-            action.addError("creationWeeks", ComponentAccessor.getJiraAuthenticationContext().getI18nHelper().getText("datacollector.report.date.error"));
-        }
         List<String> statusIds = ParameterUtils.getListParam(params, "statusIds");
         if (statusIds == null || statusIds.isEmpty()) {
             String statusId = ParameterUtils.getStringParam(params, "statusIds");

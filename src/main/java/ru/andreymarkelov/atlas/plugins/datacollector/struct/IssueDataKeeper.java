@@ -1,6 +1,8 @@
 package ru.andreymarkelov.atlas.plugins.datacollector.struct;
 
-public class IssueDataKeeper {
+import java.util.List;
+
+public class IssueDataKeeper implements ICalculatedTotal {
     private String key;
     private String summary;
     private Object data;
@@ -25,6 +27,20 @@ public class IssueDataKeeper {
 
     public String getSummary() {
         return summary;
+    }
+
+    @Override
+    public long getTotalTime() {
+        if (data instanceof List<?>) {
+            long totalTime = 0;
+            List<ICalculatedTotal> list = (List<ICalculatedTotal>) data;
+            for (ICalculatedTotal item : list) {
+                totalTime += item.getTotalTime();
+            }
+            return totalTime;
+        } else {
+            return 0;
+        }
     }
 
     public void setData(Object data) {
