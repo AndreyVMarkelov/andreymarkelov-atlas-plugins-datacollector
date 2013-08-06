@@ -60,10 +60,12 @@ public class CollectorIssueHistoryReport extends AbstractReport {
             statusIds.add(ParameterUtils.getStringParam(reqParams, "statusIds"));
         }
         boolean isUserStatus = ParameterUtils.getBooleanParam(reqParams, "userstatus");
+        boolean dataranges = ParameterUtils.getBooleanParam(reqParams, "dataranges");
 
         final Map<String, Object> velocityParams = new HashMap<String, Object>();
         velocityParams.put("grouperId", grouperId);
         velocityParams.put("isUserStatus", isUserStatus);
+        velocityParams.put("dataranges", dataranges);
         velocityParams.put("report", this);
         velocityParams.put("action", action);
         velocityParams.put("helper", new RendererHelper());

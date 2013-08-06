@@ -42,12 +42,17 @@ $webResourceManager.requireResourcesForContext("jira.view.issue")
                                                     </td>
                                                     <td class="in-collector-gridtable" width="60%">
                                                         <table>
+                                                            #if(!$dataranges)
                                                             #foreach($daterange in $entry.value)<tr><td>$helper.renderDate($daterange)</td></tr>#end
+                                                            #end
                                                             <tr><td>$i18n.getText("datacollector.alltime"): $helper.renderSpentTime($user.getStatusTime($entry.key))</td></tr>
                                                         </table>
                                                     </td>
                                                 </tr>
                                                 #end
+                                                <tr>
+                                                    <td class="collector-gridtable" colspan="2" width="40%">$i18n.getText("datacollector.alltime"): $helper.renderSpentTime($user.getTotalTime())</td>
+                                                </tr>
                                             </table>
                                         </td>
                                     </tr>
@@ -73,12 +78,17 @@ $webResourceManager.requireResourcesForContext("jira.view.issue")
                                                     </td>
                                                     <td class="in-collector-gridtable" width="60%">
                                                         <table>
+                                                            #if(!$dataranges)
                                                             #foreach($daterange in $entry.value)<tr><td>$helper.renderDate($daterange)</td></tr>#end
+                                                            #end
                                                             <tr><td>$i18n.getText("datacollector.alltime"): $helper.renderSpentTime($status.getUserTime($entry.key))</td></tr>
                                                         </table>
                                                     </td>
                                                 </tr>
                                                 #end
+                                                <tr>
+                                                    <td class="collector-gridtable" colspan="2" width="40%">$i18n.getText("datacollector.alltime"): $helper.renderSpentTime($status.getTotalTime())</td>
+                                                </tr>
                                             </table>
                                         </td>
                                     </tr>
@@ -128,12 +138,17 @@ $webResourceManager.requireResourcesForContext("jira.view.issue")
                                         </td>
                                         <td class="collector-gridtable" width="60%">
                                             <table>
+                                               #if(!$dataranges)
                                                #foreach($daterange in $entry.value)<tr><td>$helper.renderDate($daterange)</td></tr>#end
+                                               #end
                                                <tr><td>$i18n.getText("datacollector.alltime"): $helper.renderSpentTime($user.getStatusTime($entry.key))</td></tr>
                                             </table>
                                         </td>
                                     </tr>
                                     #end
+                                    <tr>
+                                        <td class="collector-gridtable" colspan="2" width="40%">$i18n.getText("datacollector.alltime"): $helper.renderSpentTime($user.getTotalTime())</td>
+                                    </tr>
                                 </table>
                             </td>
                         </tr>
@@ -176,12 +191,17 @@ $webResourceManager.requireResourcesForContext("jira.view.issue")
                                         </td>
                                         <td class="collector-gridtable" width="60%">
                                             <table>
+                                                #if(!$dataranges)
                                                 #foreach($daterange in $entry.value)<tr><td>$helper.renderDate($daterange)</td></tr>#end
+                                                #end
                                                 <tr><td>$i18n.getText("datacollector.alltime"): $helper.renderSpentTime($status.getUserTime($entry.key))</td></tr>
                                             </table>
                                         </td>
                                     </tr>
                                     #end
+                                    <tr>
+                                        <td class="collector-gridtable" colspan="2" width="40%">$i18n.getText("datacollector.alltime"): $helper.renderSpentTime($status.getTotalTime())</td>
+                                    </tr>
                                 </table>
                             </td>
                         </tr>

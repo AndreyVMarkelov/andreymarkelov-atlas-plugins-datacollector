@@ -59,6 +59,12 @@
                 <type>checkbox</type>
                 <default>true</default>
             </property>
+            <property>
+                <key>dataranges</key>
+                <name>datacollector.report.dataranges</name>
+                <description>datacollector.report.dataranges.desc</description>
+                <type>checkbox</type>
+            </property>
         </properties>
     </report>
 

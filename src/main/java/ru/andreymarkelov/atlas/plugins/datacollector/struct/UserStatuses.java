@@ -14,16 +14,7 @@ public class UserStatuses {
         statuses = new HashMap<String, List<DateRange>>();
     }
 
-    public Map<String, List<DateRange>> getStatuses() {
-        return statuses;
-    }
-
-    public int getStatusesCount() {
-        return statuses.hashCode();
-    }
-
-    public long getStatusTime(String status) {
-        List<DateRange> ranges = statuses.get(status);
+    private long getRangesTime(List<DateRange> ranges) {
         if (ranges != null) {
             long sum = 0;
             for (DateRange range : ranges) {
@@ -33,6 +24,26 @@ public class UserStatuses {
         } else {
             return 0;
         }
+    }
+
+    public Map<String, List<DateRange>> getStatuses() {
+        return statuses;
+    }
+
+    public int getStatusesCount() {
+        return statuses.size();
+    }
+
+    public long getStatusTime(String status) {
+        return getRangesTime(statuses.get(status));
+    }
+
+    public long getTotalTime() {
+        long totalTime = 0;
+        for (Map.Entry<String, List<DateRange>> entry : statuses.entrySet()) {
+            totalTime += getRangesTime(entry.getValue());
+        }
+        return totalTime;
     }
 
     public String getUser() {
