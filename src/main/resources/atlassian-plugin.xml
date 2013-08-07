@@ -10,7 +10,7 @@
     <!-- add our i18n resource -->
     <resource type="i18n" name="i18n" location="datacollector"/>
 
-    <report key="am-datacollector-issuehistory-report" name="Issue History Statistics" class="ru.andreymarkelov.atlas.plugins.datacollector.CollectorIssueHistoryReport">
+    <report key="datacollector-am-issuehistory-report" name="Issue History Statistics" class="ru.andreymarkelov.atlas.plugins.datacollector.DataCollectorIssueHistoryReport">
         <description key="datacollector.report.desc"/>
         <label key="datacollector.report"/>
         <resource type="velocity" name="view" location="templates/collector/datacollector-report.vm"/>

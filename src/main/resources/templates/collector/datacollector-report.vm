@@ -4,14 +4,15 @@ $webResourceManager.requireResourcesForContext("jira.view.issue")
     <thead>
         <tr>
             <th class="collector-gridtable" width="20%">$i18n.getText("datacollector.grouper") - $cfName</th>
-            <th class="collector-gridtable" width="80%">#if($isUserStatus)$i18n.getText("datacollector.taskuserstatustime")#else$i18n.getText("datacollector.taskstatususertime")#end</th>
+            <th class="collector-gridtable" width="80%">#if($isUserStatus)$i18n.getText("datacollector.taskstatususertime")#else$i18n.getText("datacollector.taskuserstatustime")#end</th>
         </tr>
     </thead>
     #foreach($issueGroup in $issueGroups.entrySet())
     
     <tr>
         <td class="collector-gridtable" width="20%">
-            #if($issueGroup.key != "noGroupValue")$issueGroup.key#end $helper.renderSpentTime($issueGroupSum.get($issueGroup.key))
+            #if($issueGroup.key != "noGroupValue")$issueGroup.key#end
+            <span>($helper.renderSpentTime($issueGroupSum.get($issueGroup.key)))</span>
         </td>
         <td class="collector-gridtable" width="80%">
             <table class="collector-gridtable" width="100%">
@@ -20,9 +21,10 @@ $webResourceManager.requireResourcesForContext("jira.view.issue")
                 #if($idata)
                 <tr>
                     <td class="collector-gridtable" width="30%">
-                        <a href="../browse/$issuegroup">$idata.display() $helper.renderSpentTime($idata.getTotalTime())</a>
+                        <a href="../browse/$issuegroup">$idata.display()</a>
+                        <span>($helper.renderSpentTime($idata.getTotalTime()))</span>
                     </td>
-                    <td class="in-collector-gridtable" width="70%">
+                    <td class="collector-gridtable" width="70%">
                         #if($isUserStatus)
                             #set($userinfo = $idata.getData())
                             <table class="collector-gridtable" width="100%">
@@ -30,23 +32,26 @@ $webResourceManager.requireResourcesForContext("jira.view.issue")
                                     #foreach($user in $userinfo)
                                     <tr>
                                         <td class="collector-gridtable" width="30%">
-                                            $helper.renderUser($user.getUser()) $helper.renderSpentTime($user.getTotalTime())
+                                            $helper.renderUser($user.getUser())
+                                            <span>($helper.renderSpentTime($user.getTotalTime()))</span>
                                         </td>
                                         <td class="collector-gridtable" width="70%">
-                                            <table class="in-collector-gridtable" width="100%">
+                                            <table class="collector-gridtable" width="100%">
                                                 #set($statuses = $user.getStatuses())
                                                 #foreach($entry in $statuses.entrySet())
                                                 <tr>
-                                                    <td class="in-collector-gridtable" width="40%">
+                                                    <td class="collector-gridtable" width="40%">
                                                         $helper.renderStatus($entry.key)
                                                     </td>
-                                                    <td class="in-collector-gridtable" width="60%">
+                                                    <td class="collector-gridtable" width="60%">
+                                                        #if($dataranges)
                                                         <table>
-                                                            #if(!$dataranges)
                                                             #foreach($daterange in $entry.value)<tr><td>$helper.renderDate($daterange)</td></tr>#end
-                                                            #end
                                                             <tr><td>$i18n.getText("datacollector.alltime"): $helper.renderSpentTime($user.getStatusTime($entry.key))</td></tr>
                                                         </table>
+                                                        #else
+                                                        $helper.renderSpentTime($user.getStatusTime($entry.key))
+                                                        #end
                                                     </td>
                                                 </tr>
                                                 #end
@@ -64,9 +69,10 @@ $webResourceManager.requireResourcesForContext("jira.view.issue")
                                     <tr>
                                         <td class="collector-gridtable" width="30%">
                                             $helper.renderStatus($status.getStatus())
+                                            <span>($helper.renderSpentTime($status.getTotalTime()))</span>
                                         </td>
                                         <td class="collector-gridtable" width="70%">
-                                            <table class="in-collector-gridtable" width="100%">
+                                            <table class="collector-gridtable" width="100%">
                                                 #set($users = $status.getUsers())
                                                 #foreach($entry in $users.entrySet())
                                                 <tr>
@@ -74,23 +80,21 @@ $webResourceManager.requireResourcesForContext("jira.view.issue")
                                                         $helper.renderUser($entry.key)
                                                     </td>
                                                     <td class="collector-gridtable" width="60%">
+                                                        #if($dataranges)
                                                         <table>
-                                                            #if(!$dataranges)
                                                             #foreach($daterange in $entry.value)<tr><td>$helper.renderDate($daterange)</td></tr>#end
-                                                            #end
                                                             <tr><td>$i18n.getText("datacollector.alltime"): $helper.renderSpentTime($status.getUserTime($entry.key))</td></tr>
                                                         </table>
+                                                        #else
+                                                        $helper.renderSpentTime($status.getUserTime($entry.key))
+                                                        #end
                                                     </td>
                                                 </tr>
                                                 #end
-                                                <tr>
-                                                    <td class="collector-gridtable" colspan="2" width="40%">$i18n.getText("datacollector.alltime"): $helper.renderSpentTime($status.getTotalTime())</td>
-                                                </tr>
                                             </table>
                                         </td>
                                     </tr>
                                     #end
-                                    <tr><td class="collector-gridtable" colspan="2" width="30%">$i18n.getText("datacollector.alltime"): $helper.renderSpentTime($idata.getTotalTime())</td></tr>
                                 </tbody>
                             </table>
                         #end
@@ -115,7 +119,8 @@ $webResourceManager.requireResourcesForContext("jira.view.issue")
         #foreach($entry in $data.entrySet())
         <tr>
             <td class="collector-gridtable" width="30%">
-                <a href="../browse/$entry.key">$entry.value.display()</a> $helper.renderSpentTime($entry.value.getTotalTime())
+                <a href="../browse/$entry.key">$entry.value.display()</a>
+                <span>($helper.renderSpentTime($entry.value.getTotalTime()))</span>
             </td>
             <td class="collector-gridtable" width="70%">
                 #set($userinfo = $entry.value.getData())
@@ -124,7 +129,8 @@ $webResourceManager.requireResourcesForContext("jira.view.issue")
                         #foreach($user in $userinfo)
                         <tr>
                             <td class="collector-gridtable" width="30%">
-                                $helper.renderUser($user.getUser()) $helper.renderSpentTime($user.getTotalTime())
+                                $helper.renderUser($user.getUser())
+                                <span>($helper.renderSpentTime($user.getTotalTime()))</span>
                             </td>
                             <td class="collector-gridtable" width="70%">
                                 <table class="in-collector-gridtable" width="100%">
@@ -135,12 +141,14 @@ $webResourceManager.requireResourcesForContext("jira.view.issue")
                                             $helper.renderStatus($entry.key)
                                         </td>
                                         <td class="collector-gridtable" width="60%">
+                                            #if($dataranges)
                                             <table>
-                                               #if(!$dataranges)
                                                #foreach($daterange in $entry.value)<tr><td>$helper.renderDate($daterange)</td></tr>#end
-                                               #end
                                                <tr><td>$i18n.getText("datacollector.alltime"): $helper.renderSpentTime($user.getStatusTime($entry.key))</td></tr>
                                             </table>
+                                            #else
+                                            $helper.renderSpentTime($user.getStatusTime($entry.key))
+                                            #end
                                         </td>
                                     </tr>
                                     #end
@@ -166,7 +174,8 @@ $webResourceManager.requireResourcesForContext("jira.view.issue")
         #foreach($entry in $data.entrySet())
         <tr>
             <td class="collector-gridtable" width="30%">
-                <a href="../browse/$entry.key">$entry.value.display()</a> $helper.renderSpentTime($entry.value.getTotalTime())
+                <a href="../browse/$entry.key">$entry.value.display()</a>
+                <span>($helper.renderSpentTime($entry.value.getTotalTime()))</span>
             </td>
             <td class="collector-gridtable" width="70%">
                 #set($statusinfo = $entry.value.getData())
@@ -175,7 +184,8 @@ $webResourceManager.requireResourcesForContext("jira.view.issue")
                         #foreach($status in $statusinfo)
                         <tr>
                             <td class="collector-gridtable" width="30%">
-                                $helper.renderStatus($status.getStatus()) $helper.renderSpentTime($status.getTotalTime())
+                                $helper.renderStatus($status.getStatus())
+                                <span>($helper.renderSpentTime($status.getTotalTime()))</span>
                             </td>
                             <td class="collector-gridtable" width="70%">
                                 <table class="in-collector-gridtable" width="100%">
@@ -186,12 +196,14 @@ $webResourceManager.requireResourcesForContext("jira.view.issue")
                                             $helper.renderUser($entry.key) 
                                         </td>
                                         <td class="collector-gridtable" width="60%">
+                                            #if($dataranges)
                                             <table>
-                                                #if(!$dataranges)
                                                 #foreach($daterange in $entry.value)<tr><td>$helper.renderDate($daterange)</td></tr>#end
-                                                #end
                                                 <tr><td>$i18n.getText("datacollector.alltime"): $helper.renderSpentTime($status.getUserTime($entry.key))</td></tr>
                                             </table>
+                                            #else
+                                            $helper.renderSpentTime($status.getUserTime($entry.key))
+                                            #end
                                         </td>
                                     </tr>
                                     #end

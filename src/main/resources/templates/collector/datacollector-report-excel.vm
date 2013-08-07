@@ -4,19 +4,25 @@ $webResourceManager.requireResourcesForContext("jira.view.issue")
     <thead>
         <tr>
             <th bgcolor="#dedede" width="20%">$i18n.getText("datacollector.grouper") - $cfName</th>
-            <th bgcolor="#dedede" width="80%">#if($isUserStatus)$i18n.getText("datacollector.taskuserstatustime")#else$i18n.getText("datacollector.taskstatususertime")#end</th>
+            <th bgcolor="#dedede" width="80%">#if($isUserStatus)$i18n.getText("datacollector.taskstatususertime")#else$i18n.getText("datacollector.taskuserstatustime")#end</th>
         </tr>
     </thead>
     #foreach($issueGroup in $issueGroups.entrySet())
     <tr>
-        <td width="20%">#if($issueGroup.key != "noGroupValue")$issueGroup.key#end</td>
+        <td width="20%">
+        #if($issueGroup.key != "noGroupValue")$issueGroup.key#end
+        <span>($helper.renderSpentTime($issueGroupSum.get($issueGroup.key)))</span>
+        </td>
         <td width="80%">
             <table border="1" width="100%">
                 #foreach($issuegroup in $issueGroup.value)
                 #set($idata = $data.get($issuegroup))
                 #if($idata)
                 <tr>
-                    <td width="30%">$idata.display()</td>
+                    <td width="30%">
+                    $idata.display()
+                    <span>($helper.renderSpentTime($idata.getTotalTime()))</span>
+                    </td>
                     <td width="70%">
                         #if($isUserStatus)
                             #set($userinfo = $idata.getData())
@@ -24,7 +30,10 @@ $webResourceManager.requireResourcesForContext("jira.view.issue")
                                 <tbody>
                                     #foreach($user in $userinfo)
                                     <tr>
-                                        <td width="30%">$helper.renderUserRaw($user.getUser())</td>
+                                        <td width="30%">
+                                        $helper.renderUserRaw($user.getUser())
+                                        <span>($helper.renderSpentTime($user.getTotalTime()))</span>
+                                        </td>
                                         <td width="70%">
                                             <table border="1" width="100%">
                                                 #set($statuses = $user.getStatuses())
@@ -32,23 +41,21 @@ $webResourceManager.requireResourcesForContext("jira.view.issue")
                                                 <tr>
                                                     <td width="40%">$helper.renderStatusRaw($entry.key)</td>
                                                     <td width="60%">
+                                                        #if($dataranges)
                                                         <table>
-                                                            #if(!$dataranges)
                                                             #foreach($daterange in $entry.value)<tr><td>$helper.renderDate($daterange)</td></tr>#end
-                                                            #end
                                                             <tr><td>$i18n.getText("datacollector.alltime"): $helper.renderSpentTime($user.getStatusTime($entry.key))</td></tr>
                                                         </table>
+                                                        #else
+                                                        $helper.renderSpentTime($user.getStatusTime($entry.key))
+                                                        #end
                                                     </td>
                                                 </tr>
                                                 #end
-                                                <tr>
-                                                    <td class="collector-gridtable" colspan="2" width="40%">$i18n.getText("datacollector.alltime"): $helper.renderSpentTime($user.getTotalTime())</td>
-                                                </tr>
                                             </table>
                                         </td>
                                     </tr>
                                     #end
-                                    <tr><td class="collector-gridtable" colspan="2" width="30%">$i18n.getText("datacollector.alltime"): $helper.renderSpentTime($idata.getTotalTime())</td></tr>
                                 </tbody>
                             </table>
                         #else
@@ -57,7 +64,10 @@ $webResourceManager.requireResourcesForContext("jira.view.issue")
                                 <tbody>
                                     #foreach($status in $statusinfo)
                                     <tr>
-                                        <td width="30%">$helper.renderStatusRaw($status.getStatus())</td>
+                                        <td width="30%">
+                                        $helper.renderStatusRaw($status.getStatus())
+                                        <span>($helper.renderSpentTime($status.getTotalTime()))</span>
+                                        </td>
                                         <td width="70%">
                                             <table border="1" width="100%">
                                                 #set($users = $status.getUsers())
@@ -65,29 +75,26 @@ $webResourceManager.requireResourcesForContext("jira.view.issue")
                                                 <tr>
                                                     <td width="40%">$helper.renderUserRaw($entry.key)</td>
                                                     <td width="60%">
+                                                        #if($dataranges)
                                                         <table>
-                                                            #if(!$dataranges)
                                                             #foreach($daterange in $entry.value)<tr><td>$helper.renderDate($daterange)</td></tr>#end
-                                                            #end
                                                             <tr><td>$i18n.getText("datacollector.alltime"): $helper.renderSpentTime($status.getUserTime($entry.key))</td></tr>
                                                         </table>
+                                                        #else
+                                                        $helper.renderSpentTime($status.getUserTime($entry.key))
+                                                        #end
                                                     </td>
                                                 </tr>
                                                 #end
-                                                <tr>
-                                                    <td class="collector-gridtable" colspan="2" width="40%">$i18n.getText("datacollector.alltime"): $helper.renderSpentTime($status.getTotalTime())</td>
-                                                </tr>
                                             </table>
                                         </td>
                                     </tr>
                                     #end
-                                    <tr><td class="collector-gridtable" colspan="2" width="30%">$i18n.getText("datacollector.alltime"): $helper.renderSpentTime($idata.getTotalTime())</td></tr>
                                 </tbody>
                             </table>
                         #end
                     </td>
                 </tr>
-                <tr><td class="collector-gridtable" colspan="2" width="30%">$i18n.getText("datacollector.alltime"): $helper.renderSpentTime($issueGroupSum.get($issueGroup.key))</td></tr>
                 #end
                 #end
             </table>
@@ -106,38 +113,42 @@ $webResourceManager.requireResourcesForContext("jira.view.issue")
         </thead>
         #foreach($entry in $data.entrySet())
         <tr>
-            <td width="30%">$entry.value.display() helper.renderSpentTime($entry.value.getTotalTime())</td>
+            <td width="30%">
+            $entry.value.display()
+            <span>($helper.renderSpentTime($entry.value.getTotalTime()))</span>
+            </td>
             <td width="70%">
                 #set($userinfo = $entry.value.getData())
                 <table border="1" width="100%">
                     <tbody>
                         #foreach($user in $userinfo)
                         <tr>
-                            <td width="30%">$helper.renderUserRaw($user.getUser())</td>
+                            <td width="30%">
+                            $helper.renderUserRaw($user.getUser())
+                            <span>($helper.renderSpentTime($user.getTotalTime()))</span>
+                            </td>
                             <td width="70%">
                                 <table border="1" width="100%">
                                     #set($statuses = $user.getStatuses())
                                     #foreach($entry in $statuses.entrySet())
                                     <tr>
-                                        <td width="40%">$helper.renderStatusRaw($entry.key) $helper.renderSpentTime($user.getTotalTime())</td>
+                                        <td width="40%">$helper.renderStatusRaw($entry.key)</td>
                                         <td width="60%">
+                                            #if($dataranges)
                                             <table>
-                                               #if(!$dataranges)
                                                #foreach($daterange in $entry.value)<tr><td>$helper.renderDate($daterange)</td></tr>#end
-                                               #end
                                                <tr><td>$i18n.getText("datacollector.alltime"): $helper.renderSpentTime($user.getStatusTime($entry.key))</td></tr>
                                             </table>
+                                            #else
+                                            $helper.renderSpentTime($user.getStatusTime($entry.key))
+                                            #end
                                         </td>
                                     </tr>
                                     #end
-                                    <tr>
-                                        <td class="collector-gridtable" colspan="2" width="40%">$i18n.getText("datacollector.alltime"): $helper.renderSpentTime($user.getTotalTime())</td>
-                                    </tr>
                                 </table>
                             </td>
                         </tr>
                         #end
-                        <tr><td class="collector-gridtable" colspan="2" width="30%">$i18n.getText("datacollector.alltime"): $helper.renderSpentTime($entry.value.getTotalTime())</td></tr>
                     </tbody>
                 </table>
             </td>
@@ -155,14 +166,20 @@ $webResourceManager.requireResourcesForContext("jira.view.issue")
         </thead>
         #foreach($entry in $data.entrySet())
         <tr>
-            <td width="30%">$entry.value.display() $helper.renderSpentTime($entry.value.getTotalTime())</td>
+            <td width="30%">
+            $entry.value.display()
+            <span>($helper.renderSpentTime($entry.value.getTotalTime()))</span>
+            </td>
             <td width="70%">
                 #set($statusinfo = $entry.value.getData())
                 <table border="1" width="100%">
                     <tbody>
                         #foreach($status in $statusinfo)
                         <tr>
-                            <td width="30%">$helper.renderStatusRaw($status.getStatus()) $helper.renderSpentTime($status.getTotalTime())</td>
+                            <td width="30%">
+                            $helper.renderStatusRaw($status.getStatus())
+                            <span>($helper.renderSpentTime($status.getTotalTime()))</span>
+                            </td>
                             <td width="70%">
                                 <table border="1" width="100%">
                                     #set($users = $status.getUsers())
@@ -170,23 +187,21 @@ $webResourceManager.requireResourcesForContext("jira.view.issue")
                                     <tr>
                                         <td width="40%">$helper.renderUserRaw($entry.key)</td>
                                         <td width="60%">
+                                            #if($dataranges)
                                             <table>
-                                                #if(!$dataranges)
                                                 #foreach($daterange in $entry.value)<tr><td>$helper.renderDate($daterange)</td></tr>#end
-                                                #end
                                                 <tr><td>$i18n.getText("datacollector.alltime"): $helper.renderSpentTime($status.getUserTime($entry.key))</td></tr>
                                             </table>
+                                            #else
+                                            $helper.renderSpentTime($status.getUserTime($entry.key))
+                                            #end
                                         </td>
                                     </tr>
                                     #end
-                                    <tr>
-                                        <td class="collector-gridtable" colspan="2" width="40%">$i18n.getText("datacollector.alltime"): $helper.renderSpentTime($status.getTotalTime())</td>
-                                    </tr>
                                 </table>
                             </td>
                         </tr>
                         #end
-                        <tr><td class="collector-gridtable" colspan="2" width="30%">$i18n.getText("datacollector.alltime"): $helper.renderSpentTime($entry.value.getTotalTime())</td></tr>
                     </tbody>
                 </table>
             </td>

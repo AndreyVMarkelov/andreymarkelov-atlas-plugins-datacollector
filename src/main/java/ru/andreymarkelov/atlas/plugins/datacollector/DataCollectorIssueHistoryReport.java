@@ -32,7 +32,7 @@ import com.atlassian.jira.web.bean.I18nBean;
 import com.atlassian.jira.web.bean.PagerFilter;
 import com.atlassian.query.Query;
 
-public class CollectorIssueHistoryReport extends AbstractReport {
+public class DataCollectorIssueHistoryReport extends AbstractReport {
     @Override
     public String generateReportExcel(ProjectActionSupport action, Map reqParams) throws Exception {
         return descriptor.getHtml("excel", getVelocityParams(action, reqParams));
