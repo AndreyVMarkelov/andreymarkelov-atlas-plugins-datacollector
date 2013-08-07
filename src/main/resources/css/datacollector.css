@@ -2,7 +2,9 @@ table.collector-gridtable {
     font-family: verdana,arial,sans-serif;
     font-size:11px;
     color:#333333;
-    border-width: 1px;
+    border-spacing: 0px;
+    margin: 0px;
+    padding: 0px;
     border-color: #666666;
     border-collapse: collapse;
 }
@@ -19,6 +21,7 @@ td.collector-gridtable {
     word-break:break-all;
     border-width: 1px;
     padding: 5px;
+    margin: 0px;
     border-style: solid;
     border-color: #666666;
     background-color: #ffffff;
@@ -28,15 +31,17 @@ table.in-collector-gridtable {
     font-family: verdana,arial,sans-serif;
     font-size:11px;
     color:#333333;
-    border-width: 1px;
+    border-spacing: 0px;
+    margin: 0px;
+    padding: 0px;
     border-color: #666666;
     border-collapse: collapse;
 }
 
 td.in-collector-gridtable {
     border-width: 1px;
-    padding: 5px;
     border-style: solid;
+    margin: 0px;
     border-color: #666666;
     background-color: #ffffff;
 }

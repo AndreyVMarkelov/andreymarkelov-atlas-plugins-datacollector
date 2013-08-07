@@ -106,7 +106,7 @@ $webResourceManager.requireResourcesForContext("jira.view.issue")
         </thead>
         #foreach($entry in $data.entrySet())
         <tr>
-            <td width="30%">$entry.value.display()</td>
+            <td width="30%">$entry.value.display() helper.renderSpentTime($entry.value.getTotalTime())</td>
             <td width="70%">
                 #set($userinfo = $entry.value.getData())
                 <table border="1" width="100%">
@@ -119,7 +119,7 @@ $webResourceManager.requireResourcesForContext("jira.view.issue")
                                     #set($statuses = $user.getStatuses())
                                     #foreach($entry in $statuses.entrySet())
                                     <tr>
-                                        <td width="40%">$helper.renderStatusRaw($entry.key)</td>
+                                        <td width="40%">$helper.renderStatusRaw($entry.key) $helper.renderSpentTime($user.getTotalTime())</td>
                                         <td width="60%">
                                             <table>
                                                #if(!$dataranges)
@@ -155,14 +155,14 @@ $webResourceManager.requireResourcesForContext("jira.view.issue")
         </thead>
         #foreach($entry in $data.entrySet())
         <tr>
-            <td width="30%">$entry.value.display()</td>
+            <td width="30%">$entry.value.display() $helper.renderSpentTime($entry.value.getTotalTime())</td>
             <td width="70%">
                 #set($statusinfo = $entry.value.getData())
                 <table border="1" width="100%">
                     <tbody>
                         #foreach($status in $statusinfo)
                         <tr>
-                            <td width="30%">$helper.renderStatusRaw($status.getStatus())</td>
+                            <td width="30%">$helper.renderStatusRaw($status.getStatus()) $helper.renderSpentTime($status.getTotalTime())</td>
                             <td width="70%">
                                 <table border="1" width="100%">
                                     #set($users = $status.getUsers())
