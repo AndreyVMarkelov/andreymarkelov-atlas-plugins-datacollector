@@ -100,7 +100,7 @@ $webResourceManager.requireResourcesForContext("jira.view.issue")
                         #end
                     </td>
                 </tr>
-                <tr><td class="collector-gridtable" colspan="2" width="30%">$i18n.getText("datacollector.alltime"): $helper.renderSpentTime($totalData)</td></tr>
+                <tr><td class="collector-gridtable" colspan="2" width="30%">$i18n.getText("datacollector.alltime"): $helper.renderSpentTime($issueGroupSum.get($issueGroup.key))</td></tr>
                 #end
                 #end
             </table>

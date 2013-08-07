@@ -30,6 +30,7 @@ import com.atlassian.jira.util.ParameterUtils;
 import com.atlassian.jira.web.action.ProjectActionSupport;
 import com.atlassian.jira.web.bean.I18nBean;
 import com.atlassian.jira.web.bean.PagerFilter;
+import com.atlassian.query.Query;
 
 public class CollectorIssueHistoryReport extends AbstractReport {
     @Override
@@ -43,9 +44,16 @@ public class CollectorIssueHistoryReport extends AbstractReport {
     }
 
     private List<Issue> getIssuesFromProject(Long pid, Date startDate) throws SearchException {
+        Query q;
+        if (startDate != null) {
+            q = JqlQueryBuilder.newBuilder().where().project(pid).and().createdAfter(startDate).buildQuery();
+        } else {
+            q = JqlQueryBuilder.newBuilder().where().project(pid).buildQuery();
+        }
+
         SearchResults results = ComponentManager.getInstance().getSearchService().search(
             ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser(),
-            JqlQueryBuilder.newBuilder().where().project(pid).and().createdAfter(startDate).buildQuery(),
+            q,
             PagerFilter.getUnlimitedFilter());
         return results.getIssues();
     }
@@ -133,6 +141,19 @@ public class CollectorIssueHistoryReport extends AbstractReport {
             }
         }
 
+        Map<String, Long> issueGroupSum = new HashMap<String, Long>();
+        for (Map.Entry<String, List<String>> entry : issueGroups.entrySet()) {
+            String key = entry.getKey();
+            List<String> iKeys = entry.getValue();
+            long total = 0;
+            for (String iKey : iKeys) {
+                IssueDataKeeper idk = data.get(iKey);
+                if (idk != null) total += idk.getTotalTime();
+            }
+            issueGroupSum.put(key, total);
+        }
+
+        velocityParams.put("issueGroupSum", issueGroupSum);
         velocityParams.put("totalData", getTotalTime(data.values()));
         velocityParams.put("issueGroups", issueGroups);
         velocityParams.put("data", data);
