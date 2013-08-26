@@ -7,7 +7,7 @@ $webResourceManager.requireResourcesForContext("jira.view.issue")
             <th bgcolor="#dedede" width="80%">#if($isUserStatus)$i18n.getText("datacollector.taskstatususertime")#else$i18n.getText("datacollector.taskuserstatustime")#end</th>
         </tr>
     </thead>
-    #foreach($issueGroup in $issueGroups.entrySet())
+    #foreach($issueGroup in $issueGroupsData.entrySet())
     <tr>
         <td width="20%">
         #if($issueGroup.key != "noGroupValue")$issueGroup.key#end
@@ -16,7 +16,7 @@ $webResourceManager.requireResourcesForContext("jira.view.issue")
         <td width="80%">
             <table border="1" width="100%">
                 #foreach($issuegroup in $issueGroup.value)
-                #set($idata = $data.get($issuegroup))
+                #set($idata = $issuegroup)
                 #if($idata)
                 <tr>
                     <td width="30%">

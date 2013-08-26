@@ -26,8 +26,14 @@
             </property>
             <property>
                 <key>startDate</key>
-                <name>datacollector.report.date.desc</name>
-                <description>datacollector.report.date</description>
+                <name>datacollector.report.date</name>
+                <description>datacollector.report.date.desc</description>
+                <type>date</type>
+            </property>
+            <property>
+                <key>endDate</key>
+                <name>datacollector.report.enddate</name>
+                <description>datacollector.report.enddate.desc</description>
                 <type>date</type>
             </property>
             <property>

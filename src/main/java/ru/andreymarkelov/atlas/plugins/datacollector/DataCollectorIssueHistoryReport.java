@@ -43,10 +43,14 @@ public class DataCollectorIssueHistoryReport extends AbstractReport {
         return descriptor.getHtml("view", getVelocityParams(action, reqParams));
     }
 
-    private List<Issue> getIssuesFromProject(Long pid, Date startDate) throws SearchException {
+    private List<Issue> getIssuesFromProject(Long pid, Date startDate, Date endDate) throws SearchException {
         Query q;
-        if (startDate != null) {
+        if (startDate != null && endDate == null) {
             q = JqlQueryBuilder.newBuilder().where().project(pid).and().createdAfter(startDate).buildQuery();
+        } else if (startDate != null && endDate != null) {
+            q = JqlQueryBuilder.newBuilder().where().project(pid).and().createdBetween(startDate, endDate).buildQuery();
+        } else if (startDate == null && endDate != null) {
+            q = JqlQueryBuilder.newBuilder().where().project(pid).and().created().ltEq(endDate).buildQuery();
         } else {
             q = JqlQueryBuilder.newBuilder().where().project(pid).buildQuery();
         }
@@ -62,6 +66,7 @@ public class DataCollectorIssueHistoryReport extends AbstractReport {
         User remoteUser = action.getRemoteUser();
         I18nHelper i18nBean = new I18nBean(remoteUser);
         Date startDate = ParameterUtils.getDateParam(reqParams, "startDate", i18nBean.getLocale());
+        Date endDate = ParameterUtils.getDateParam(reqParams, "endDate", i18nBean.getLocale());
 
         Long projectId = ParameterUtils.getLongParam(reqParams, "projectId");
         String grouperId = ParameterUtils.getStringParam(reqParams, "groupField");
@@ -85,7 +90,33 @@ public class DataCollectorIssueHistoryReport extends AbstractReport {
         Map<String, List<String>> issueGroups = new HashMap<String, List<String>>();
         Map<String, IssueDataKeeper> data = new HashMap<String, IssueDataKeeper>();
 
-        List<Issue> issues = getIssuesFromProject(projectId, startDate);
+        List<Issue> issues = getIssuesFromProject(projectId, startDate, endDate);
+
+        for (Issue issue : issues) {
+            List<ChangeHistoryItem> items = ComponentAccessor.getChangeHistoryManager().getAllChangeItems(issue);
+            if (isUserStatus) {
+                List<UserStatuses> userStatuses = CollectorUtils.reduceUserStatuses(
+                    CollectorUtils.getUserStatuses(
+                        new Users(CollectorUtils.getUserRanges(items, issue)),
+                        new Statuses(CollectorUtils.getStatusRanges(items, issue))),
+                    statusIds);
+                if (!userStatuses.isEmpty()) {
+                    data.put(issue.getKey(), new IssueDataKeeper(issue.getKey(), issue.getSummary(), userStatuses));
+                }
+            } else {
+                List<StatusUsers> statusUsers = CollectorUtils.reduceStatusUsers(
+                    CollectorUtils.getStatusUsers(
+                        new Users(CollectorUtils.getUserRanges(items, issue)),
+                        new Statuses(CollectorUtils.getStatusRanges(items, issue))),
+                    statusIds);
+                if (!statusUsers.isEmpty()) {
+                    data.put(issue.getKey(), new IssueDataKeeper(issue.getKey(), issue.getSummary(), statusUsers));
+                }
+            }
+        }
+        velocityParams.put("data", data);
+        velocityParams.put("totalData", getTotalTime(data.values()));
+
         if (!grouperId.equals("null")) {
             CustomField cf = ComponentAccessor.getCustomFieldManager().getCustomFieldObject(grouperId);
             if (cf != null) {
@@ -116,47 +147,40 @@ public class DataCollectorIssueHistoryReport extends AbstractReport {
                     }
                 }
             }
-        }
 
-        for (Issue issue : issues) {
-            List<ChangeHistoryItem> items = ComponentAccessor.getChangeHistoryManager().getAllChangeItems(issue);
-            if (isUserStatus) {
-                List<UserStatuses> userStatuses = CollectorUtils.reduceUserStatuses(
-                    CollectorUtils.getUserStatuses(
-                        new Users(CollectorUtils.getUserRanges(items, issue)),
-                        new Statuses(CollectorUtils.getStatusRanges(items, issue))),
-                    statusIds);
-                if (!userStatuses.isEmpty()) {
-                    data.put(issue.getKey(), new IssueDataKeeper(issue.getKey(), issue.getSummary(), userStatuses));
+            Map<String, Long> issueGroupSum = new HashMap<String, Long>();
+            for (Map.Entry<String, List<String>> entry : issueGroups.entrySet()) {
+                String key = entry.getKey();
+                List<String> iKeys = entry.getValue();
+                long total = 0;
+                for (String iKey : iKeys) {
+                    IssueDataKeeper idk = data.get(iKey);
+                    if (idk != null) total += idk.getTotalTime();
                 }
-            } else {
-                List<StatusUsers> statusUsers = CollectorUtils.reduceStatusUsers(
-                    CollectorUtils.getStatusUsers(
-                        new Users(CollectorUtils.getUserRanges(items, issue)),
-                        new Statuses(CollectorUtils.getStatusRanges(items, issue))),
-                    statusIds);
-                if (!statusUsers.isEmpty()) {
-                    data.put(issue.getKey(), new IssueDataKeeper(issue.getKey(), issue.getSummary(), statusUsers));
+                issueGroupSum.put(key, total);
+            }
+            velocityParams.put("issueGroupSum", issueGroupSum);
+            velocityParams.put("issueGroups", issueGroups);
+
+            Map<String, List<IssueDataKeeper>> issueGroupsData = new HashMap<String, List<IssueDataKeeper>>();
+            for (Map.Entry<String, List<String>> item : issueGroups.entrySet()) {
+                String key = item.getKey();
+                List<String> value = item.getValue();
+                for (String k : value) {
+                    if (data.containsKey(k)) {
+                        if (issueGroupsData.containsKey(key)) {
+                            issueGroupsData.get(key).add(data.get(k));
+                        } else {
+                            List<IssueDataKeeper> keeper = new ArrayList<IssueDataKeeper>();
+                            keeper.add(data.get(k));
+                            issueGroupsData.put(key, keeper);
+                        }
+                    }
                 }
             }
+            velocityParams.put("issueGroupsData", issueGroupsData);
         }
 
-        Map<String, Long> issueGroupSum = new HashMap<String, Long>();
-        for (Map.Entry<String, List<String>> entry : issueGroups.entrySet()) {
-            String key = entry.getKey();
-            List<String> iKeys = entry.getValue();
-            long total = 0;
-            for (String iKey : iKeys) {
-                IssueDataKeeper idk = data.get(iKey);
-                if (idk != null) total += idk.getTotalTime();
-            }
-            issueGroupSum.put(key, total);
-        }
-
-        velocityParams.put("issueGroupSum", issueGroupSum);
-        velocityParams.put("totalData", getTotalTime(data.values()));
-        velocityParams.put("issueGroups", issueGroups);
-        velocityParams.put("data", data);
         return velocityParams;
     }
 

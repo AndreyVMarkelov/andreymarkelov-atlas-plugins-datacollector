@@ -7,8 +7,7 @@ $webResourceManager.requireResourcesForContext("jira.view.issue")
             <th class="collector-gridtable" width="80%">#if($isUserStatus)$i18n.getText("datacollector.taskstatususertime")#else$i18n.getText("datacollector.taskuserstatustime")#end</th>
         </tr>
     </thead>
-    #foreach($issueGroup in $issueGroups.entrySet())
-    
+    #foreach($issueGroup in $issueGroupsData.entrySet())
     <tr>
         <td class="collector-gridtable" width="20%">
             #if($issueGroup.key != "noGroupValue")$issueGroup.key#end
@@ -17,11 +16,11 @@ $webResourceManager.requireResourcesForContext("jira.view.issue")
         <td class="collector-gridtable" width="80%">
             <table class="collector-gridtable" width="100%">
                 #foreach($issuegroup in $issueGroup.value)
-                #set($idata = $data.get($issuegroup))
+                #set($idata = $issuegroup)
                 #if($idata)
                 <tr>
                     <td class="collector-gridtable" width="30%">
-                        <a href="../browse/$issuegroup">$idata.display()</a>
+                        <a href="../browse/$idata.getKey()">$idata.display()</a>
                         <span>($helper.renderSpentTime($idata.getTotalTime()))</span>
                     </td>
                     <td class="collector-gridtable" width="70%">
