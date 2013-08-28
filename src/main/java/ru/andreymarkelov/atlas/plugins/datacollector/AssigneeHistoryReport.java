@@ -20,12 +20,12 @@ import com.atlassian.jira.issue.search.SearchException;
 import com.atlassian.jira.issue.search.SearchResults;
 import com.atlassian.jira.jql.builder.JqlQueryBuilder;
 import com.atlassian.jira.plugin.report.impl.AbstractReport;
-import com.atlassian.jira.project.Project;
 import com.atlassian.jira.util.I18nHelper;
 import com.atlassian.jira.util.ParameterUtils;
 import com.atlassian.jira.web.action.ProjectActionSupport;
 import com.atlassian.jira.web.bean.I18nBean;
 import com.atlassian.jira.web.bean.PagerFilter;
+import com.atlassian.query.Query;
 
 public class AssigneeHistoryReport extends AbstractReport {
     @Override
@@ -38,10 +38,21 @@ public class AssigneeHistoryReport extends AbstractReport {
         return descriptor.getHtml("view", getVelocityParams(action, reqParams));
     }
 
-    private List<Issue> getIssuesFromProject(Long pid) throws SearchException {
+    private List<Issue> getIssuesFromProject(Long pid, Date startDate, Date endDate) throws SearchException {
+        Query q;
+        if (startDate != null && endDate == null) {
+            q = JqlQueryBuilder.newBuilder().where().project(pid).and().createdAfter(startDate).buildQuery();
+        } else if (startDate != null && endDate != null) {
+            q = JqlQueryBuilder.newBuilder().where().project(pid).and().createdBetween(startDate, endDate).buildQuery();
+        } else if (startDate == null && endDate != null) {
+            q = JqlQueryBuilder.newBuilder().where().project(pid).and().created().ltEq(endDate).buildQuery();
+        } else {
+            q = JqlQueryBuilder.newBuilder().where().project(pid).buildQuery();
+        }
+
         SearchResults results = ComponentManager.getInstance().getSearchService().search(
             ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser(),
-            JqlQueryBuilder.newBuilder().where().project(pid).buildQuery(),
+            q,
             PagerFilter.getUnlimitedFilter());
         return results.getIssues();
     }
@@ -59,17 +70,19 @@ public class AssigneeHistoryReport extends AbstractReport {
         User remoteUser = action.getRemoteUser();
         I18nHelper i18nBean = new I18nBean(remoteUser);
         Date startDate = ParameterUtils.getDateParam(reqParams, "startDate", i18nBean.getLocale());
-        Date endDate = null;//ParameterUtils.getDateParam(reqParams, "endDate", i18nBean.getLocale());
+        Date endDate = ParameterUtils.getDateParam(reqParams, "endDate", i18nBean.getLocale());
         List<String> statusIds = ParameterUtils.getListParam(reqParams, "statusIds");
         if (statusIds == null || statusIds.isEmpty()) {
             statusIds = new ArrayList<String>();
             statusIds.add(ParameterUtils.getStringParam(reqParams, "statusIds"));
         }
-        Project proj = ComponentAccessor.getProjectManager().getProjectObj(Long.valueOf(reqParams.get("selectedProjectId").toString()));
+        Long projectId = ParameterUtils.getLongParam(reqParams, "selectedProjectId");
+        User user = ParameterUtils.getUserParam(reqParams, "userfilter");
+        boolean dataranges = ParameterUtils.getBooleanParam(reqParams, "dataranges");
 
         Map<String, List<IssueDataKeeper>> usersData = new HashMap<String, List<IssueDataKeeper>>();
 
-        List<Issue> issues = getIssuesFromProject(proj.getId());
+        List<Issue> issues = getIssuesFromProject(projectId, startDate, endDate);
         for (Issue issue : issues) {
             List<ChangeHistoryItem> items = ComponentAccessor.getChangeHistoryManager().getAllChangeItems(issue);
 
@@ -79,6 +92,10 @@ public class AssigneeHistoryReport extends AbstractReport {
                         new Statuses(CollectorUtils.getStatusRanges(items, issue))),
                     statusIds);
             for (UserStatuses userStatus : userStatuses) {
+                if (user != null && !user.getName().equals(userStatus.getUser())) {
+                    continue;
+                }
+
                 if (usersData.containsKey(userStatus.getUser())) {
                     List<UserStatuses> userStatuses1 = new ArrayList<UserStatuses>();
                     userStatuses1.add(userStatus);
@@ -97,7 +114,7 @@ public class AssigneeHistoryReport extends AbstractReport {
         velocityParams.put("report", this);
         velocityParams.put("action", action);
         velocityParams.put("helper", new RendererHelper());
-        velocityParams.put("dataranges", true);
+        velocityParams.put("dataranges", dataranges);
         velocityParams.put("usersData", usersData);
 
         return velocityParams;
@@ -115,6 +132,13 @@ public class AssigneeHistoryReport extends AbstractReport {
 
     @Override
     public void validate(ProjectActionSupport action, Map params) {
+        List<String> statusIds = ParameterUtils.getListParam(params, "statusIds");
+        if (statusIds == null || statusIds.isEmpty()) {
+            String statusId = ParameterUtils.getStringParam(params, "statusIds");
+            if (statusId == null) {
+                action.addError("statusIds", ComponentAccessor.getJiraAuthenticationContext().getI18nHelper().getText("datacollector.report.statuses.error"));
+            }
+        }
         super.validate(action, params);
     }
 }

@@ -1,0 +1,58 @@
+<table border="1" width="100%">
+    <thead>
+        <tr>
+            <th bgcolor="#dedede" width="20%">$i18n.getText("datacollector.usertab")</th>
+            <th bgcolor="#dedede" width="80%">$i18n.getText("datacollector.taskstatustime")</th>
+        </tr>
+    </thead>
+    <tbody>
+        #foreach($entry in $usersData.entrySet())
+        <tr>
+            <td width="20%">
+                $helper.renderUserRaw($entry.key)
+                <span>($helper.renderSpentTime($report.getIssueTotalTime($entry.value)))</span>
+            </td>
+            <td width="80%">
+                <table border="1" width="100%">
+                    #set($issuedata = $entry.value)
+                    #foreach($idata in $issuedata)
+                    <tr>
+                        <td width="40%">
+                            $idata.display()
+                            <span>($helper.renderSpentTime($idata.getTotalTime()))</span>
+                        </td>
+                        <td width="60%">
+                            <table border="1" width="100%">
+                                #set($userinfo = $idata.getData())
+                                <tbody>
+                                #foreach($user in $userinfo)
+                                    #set($statuses = $user.getStatuses())
+                                    #foreach($entrystatus in $statuses.entrySet())
+                                    <tr>
+                                        <td width="40%">
+                                            $helper.renderStatusRaw($entrystatus.key)
+                                        </td>
+                                        <td width="60%">
+                                        #if($dataranges)
+                                            <table>
+                                                #foreach($daterange in $entrystatus.value)<tr><td>$helper.renderDate($daterange)</td></tr>#end
+                                                <tr><td>$i18n.getText("datacollector.alltime"): $helper.renderSpentTime($user.getStatusTime($entrystatus.key))</td></tr>
+                                            </table>
+                                        #else
+                                            $helper.renderSpentTime($user.getStatusTime($entrystatus.key))
+                                        #end
+                                        </td>
+                                    </tr>
+                                    #end
+                                #end
+                                <tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    #end
+                </table>
+            </td>
+        </tr>
+        #end
+    </tbody>
+</table>

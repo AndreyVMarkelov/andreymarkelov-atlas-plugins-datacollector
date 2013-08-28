@@ -11,8 +11,8 @@
     <resource type="i18n" name="i18n" location="datacollector"/>
 
     <report key="datacollector-am-assignee-report" name="Assignee History Statistics" class="ru.andreymarkelov.atlas.plugins.datacollector.AssigneeHistoryReport">
-        <description key="datacollector.report.desc1"/>
-        <label key="datacollector.report1"/>
+        <description key="datacollector.assignee.report.desc"/>
+        <label key="datacollector.assignee.report"/>
         <resource type="velocity" name="view" location="templates/collector/am-assignee-report.vm"/>
         <resource type="velocity" name="excel" location="templates/collector/am-assignee-report-excel.vm"/>
         <resource type="i18n" name="i18n" location="datacollector"/>
@@ -36,6 +36,18 @@
                 <type>multiselect</type>
                 <values class="ru.andreymarkelov.atlas.plugins.datacollector.StatusValuesGenerator"/>
             </property>
+            <property>
+                <key>userfilter</key>
+                <name>datacollector.report.userfilter</name>
+                <description>datacollector.report.userfilter.desc</description>
+                <type>user</type>
+            </property>
+            <property>
+                <key>dataranges</key>
+                <name>datacollector.report.dataranges</name>
+                <description>datacollector.report.dataranges.desc</description>
+                <type>checkbox</type>
+            </property>
         </properties>
     </report>
 
@@ -46,13 +58,6 @@
         <resource type="velocity" name="excel" location="templates/collector/datacollector-report-excel.vm"/>
         <resource type="i18n" name="i18n" location="datacollector"/>
         <properties>
-            <property>
-                <key>projectId</key>
-                <name>datacollector.report.project</name>
-                <description>datacollector.report.project.desc</description>
-                <type>select</type>
-                <values class="ru.andreymarkelov.atlas.plugins.datacollector.ProjectValuesGenerator"/>
-            </property>
             <property>
                 <key>startDate</key>
                 <name>datacollector.report.date</name>

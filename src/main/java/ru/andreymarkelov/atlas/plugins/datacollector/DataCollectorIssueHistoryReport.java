@@ -74,9 +74,9 @@ public class DataCollectorIssueHistoryReport extends AbstractReport {
         User remoteUser = action.getRemoteUser();
         I18nHelper i18nBean = new I18nBean(remoteUser);
         Date startDate = ParameterUtils.getDateParam(reqParams, "startDate", i18nBean.getLocale());
-        Date endDate = null;//ParameterUtils.getDateParam(reqParams, "endDate", i18nBean.getLocale());
+        Date endDate = ParameterUtils.getDateParam(reqParams, "endDate", i18nBean.getLocale());
 
-        Long projectId = ParameterUtils.getLongParam(reqParams, "projectId");
+        Long projectId = ParameterUtils.getLongParam(reqParams, "selectedProjectId");
         String grouperId = ParameterUtils.getStringParam(reqParams, "groupField");
         String grouperValue = ParameterUtils.getStringParam(reqParams, "groupFieldValue");
         List<String> statusIds = ParameterUtils.getListParam(reqParams, "statusIds");
