@@ -155,7 +155,7 @@ public class CollectorUtils {
             if (ranges.isEmpty()) {
                 ranges.add(new UserDateRange(new Date(issue.getCreated().getTime()), new Date(), getInitialUser(items, issue)));
             } else {
-                ranges.add(new UserDateRange(ranges.get(ranges.size() - 1).getTo(), new Date(), issue.getAssignee().getName()));
+                ranges.add(new UserDateRange(ranges.get(ranges.size() - 1).getTo(), new Date(), (issue.getAssignee() == null) ? "unknown" : issue.getAssignee().getName()));
             }
             return ranges;
         } catch (Exception ex) {

@@ -10,6 +10,35 @@
     <!-- add our i18n resource -->
     <resource type="i18n" name="i18n" location="datacollector"/>
 
+    <report key="datacollector-am-assignee-report" name="Assignee History Statistics" class="ru.andreymarkelov.atlas.plugins.datacollector.AssigneeHistoryReport">
+        <description key="datacollector.report.desc1"/>
+        <label key="datacollector.report1"/>
+        <resource type="velocity" name="view" location="templates/collector/am-assignee-report.vm"/>
+        <resource type="velocity" name="excel" location="templates/collector/am-assignee-report-excel.vm"/>
+        <resource type="i18n" name="i18n" location="datacollector"/>
+        <properties>
+            <property>
+                <key>startDate</key>
+                <name>datacollector.report.date</name>
+                <description>datacollector.report.date.desc</description>
+                <type>date</type>
+            </property>
+            <property>
+                <key>endDate</key>
+                <name>datacollector.report.enddate</name>
+                <description>datacollector.report.enddate.desc</description>
+                <type>date</type>
+            </property>
+            <property>
+                <key>statusIds</key>
+                <name>datacollector.report.statuses</name>
+                <description>datacollector.report.statuses.desc</description>
+                <type>multiselect</type>
+                <values class="ru.andreymarkelov.atlas.plugins.datacollector.StatusValuesGenerator"/>
+            </property>
+        </properties>
+    </report>
+
     <report key="datacollector-am-issuehistory-report" name="Issue History Statistics" class="ru.andreymarkelov.atlas.plugins.datacollector.DataCollectorIssueHistoryReport">
         <description key="datacollector.report.desc"/>
         <label key="datacollector.report"/>

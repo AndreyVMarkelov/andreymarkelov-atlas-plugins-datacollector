@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 public class Users {
     private Map<String, List<DateRange>> users;
 

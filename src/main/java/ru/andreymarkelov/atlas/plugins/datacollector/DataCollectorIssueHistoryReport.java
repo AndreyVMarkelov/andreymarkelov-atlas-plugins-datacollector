@@ -62,11 +62,19 @@ public class DataCollectorIssueHistoryReport extends AbstractReport {
         return results.getIssues();
     }
 
+    public long getTotalTime(Collection<IssueDataKeeper> items) {
+        long totalTime = 0;
+        for (IssueDataKeeper idk : items) {
+            totalTime += idk.getTotalTime();
+        }
+        return totalTime;
+    }
+
     private Map<String, Object> getVelocityParams(ProjectActionSupport action, Map reqParams) throws SearchException {
         User remoteUser = action.getRemoteUser();
         I18nHelper i18nBean = new I18nBean(remoteUser);
         Date startDate = ParameterUtils.getDateParam(reqParams, "startDate", i18nBean.getLocale());
-        Date endDate = ParameterUtils.getDateParam(reqParams, "endDate", i18nBean.getLocale());
+        Date endDate = null;//ParameterUtils.getDateParam(reqParams, "endDate", i18nBean.getLocale());
 
         Long projectId = ParameterUtils.getLongParam(reqParams, "projectId");
         String grouperId = ParameterUtils.getStringParam(reqParams, "groupField");
@@ -182,14 +190,6 @@ public class DataCollectorIssueHistoryReport extends AbstractReport {
         }
 
         return velocityParams;
-    }
-
-    public long getTotalTime(Collection<IssueDataKeeper> items) {
-        long totalTime = 0;
-        for (IssueDataKeeper idk : items) {
-            totalTime += idk.getTotalTime();
-        }
-        return totalTime;
     }
 
     @Override

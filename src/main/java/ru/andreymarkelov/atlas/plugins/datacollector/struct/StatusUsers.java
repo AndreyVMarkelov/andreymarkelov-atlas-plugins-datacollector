@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 public class StatusUsers implements ICalculatedTotal {
     private String status;
     private Map<String, List<DateRange>> users;
@@ -61,6 +60,6 @@ public class StatusUsers implements ICalculatedTotal {
 
     @Override
     public String toString() {
-        return "StatusUsers [status=" + status + ", users=" + users + "]";
+        return "StatusUsers[status=" + status + ", users=" + users + "]";
     }
 }

@@ -57,6 +57,6 @@ public class IssueDataKeeper implements ICalculatedTotal {
 
     @Override
     public String toString() {
-        return "IssueDataKeeper [key=" + key + ", summary=" + summary + ", data=" + data + "]";
+        return "IssueDataKeeper[key=" + key + ", summary=" + summary + ", data=" + data + "]";
     }
 }
