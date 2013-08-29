@@ -207,11 +207,23 @@ public class CollectorUtils {
     }
 
     public static List<StatusUsers> reduceStatusUsers(List<StatusUsers> statusUsers, List<String> statusIds) {
-        Iterator<StatusUsers> iter = statusUsers.iterator();
-        while (iter.hasNext()) {
-            StatusUsers su = iter.next();
+        Iterator<StatusUsers> suIter = statusUsers.iterator();
+        while (suIter.hasNext()) {
+            StatusUsers su = suIter.next();
             if (!statusIds.contains(su.getStatus())) {
-                iter.remove();
+                suIter.remove();
+            }
+        }
+        return statusUsers;
+    }
+
+    public static List<StatusUsers> reduceStatusUsersByRange(List<StatusUsers> statusUsers, DateRange dr) {
+        Iterator<StatusUsers> suIter = statusUsers.iterator();
+        while (suIter.hasNext()) {
+            StatusUsers su = suIter.next();
+            su.reduceByRange(dr);
+            if (!su.isValid()) {
+                suIter.remove();
             }
         }
         return statusUsers;
@@ -228,7 +240,19 @@ public class CollectorUtils {
                     iter.remove();
                 }
             }
-            if (us.getStatuses().isEmpty()) {
+            if (!us.isValid()) {
+                usIter.remove();
+            }
+        }
+        return userStatuses;
+    }
+
+    public static List<UserStatuses> reduceUserStatusesByRange(List<UserStatuses> userStatuses, DateRange dr) {
+        Iterator<UserStatuses> usIter = userStatuses.iterator();
+        while (usIter.hasNext()) {
+            UserStatuses us = usIter.next();
+            us.reduceByRange(dr);
+            if (!us.isValid()) {
                 usIter.remove();
             }
         }

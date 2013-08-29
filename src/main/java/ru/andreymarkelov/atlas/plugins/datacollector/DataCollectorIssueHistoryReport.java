@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
+import ru.andreymarkelov.atlas.plugins.datacollector.struct.DateRange;
 import ru.andreymarkelov.atlas.plugins.datacollector.struct.IssueDataKeeper;
 import ru.andreymarkelov.atlas.plugins.datacollector.struct.StatusUsers;
 import ru.andreymarkelov.atlas.plugins.datacollector.struct.Statuses;
@@ -102,21 +103,19 @@ public class DataCollectorIssueHistoryReport extends AbstractReport {
 
         for (Issue issue : issues) {
             List<ChangeHistoryItem> items = ComponentAccessor.getChangeHistoryManager().getAllChangeItems(issue);
+            Users users = new Users(CollectorUtils.getUserRanges(items, issue));
+            Statuses statuses = new Statuses(CollectorUtils.getStatusRanges(items, issue));
             if (isUserStatus) {
-                List<UserStatuses> userStatuses = CollectorUtils.reduceUserStatuses(
-                    CollectorUtils.getUserStatuses(
-                        new Users(CollectorUtils.getUserRanges(items, issue)),
-                        new Statuses(CollectorUtils.getStatusRanges(items, issue))),
-                    statusIds);
+                List<UserStatuses> userStatuses = CollectorUtils.getUserStatuses(users, statuses);
+                userStatuses = CollectorUtils.reduceUserStatuses(userStatuses, statusIds);
+                userStatuses = CollectorUtils.reduceUserStatusesByRange(userStatuses, new DateRange(startDate, endDate));
                 if (!userStatuses.isEmpty()) {
                     data.put(issue.getKey(), new IssueDataKeeper(issue.getKey(), issue.getSummary(), userStatuses));
                 }
             } else {
-                List<StatusUsers> statusUsers = CollectorUtils.reduceStatusUsers(
-                    CollectorUtils.getStatusUsers(
-                        new Users(CollectorUtils.getUserRanges(items, issue)),
-                        new Statuses(CollectorUtils.getStatusRanges(items, issue))),
-                    statusIds);
+                List<StatusUsers> statusUsers = CollectorUtils.getStatusUsers(users, statuses);
+                statusUsers = CollectorUtils.reduceStatusUsers(statusUsers, statusIds);
+                statusUsers = CollectorUtils.reduceStatusUsersByRange(statusUsers, new DateRange(startDate, endDate));
                 if (!statusUsers.isEmpty()) {
                     data.put(issue.getKey(), new IssueDataKeeper(issue.getKey(), issue.getSummary(), statusUsers));
                 }

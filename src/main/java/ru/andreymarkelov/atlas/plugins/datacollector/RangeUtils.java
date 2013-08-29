@@ -37,11 +37,23 @@ public class RangeUtils {
     }
 
     private static Date max(Date d1, Date d2) {
-        return new Date(Math.max(d1.getTime(), d2.getTime()));
+        if (d1 == null && d2 != null) {
+            return d2;
+        } else if (d1 != null && d2 == null) {
+            return d1;
+        } else {
+            return new Date(Math.max(d1.getTime(), d2.getTime()));
+        }
     }
 
     private static Date min(Date d1, Date d2) {
-        return new Date(Math.min(d1.getTime(), d2.getTime()));
+        if (d1 == null && d2 != null) {
+            return d2;
+        } else if (d1 != null && d2 == null) {
+            return d1;
+        } else {
+            return new Date(Math.min(d1.getTime(), d2.getTime()));
+        }
     }
 
     private RangeUtils() {

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ru.andreymarkelov.atlas.plugins.datacollector.struct.DateRange;
 import ru.andreymarkelov.atlas.plugins.datacollector.struct.IssueDataKeeper;
 import ru.andreymarkelov.atlas.plugins.datacollector.struct.Statuses;
 import ru.andreymarkelov.atlas.plugins.datacollector.struct.UserStatuses;
@@ -86,11 +87,12 @@ public class AssigneeHistoryReport extends AbstractReport {
         for (Issue issue : issues) {
             List<ChangeHistoryItem> items = ComponentAccessor.getChangeHistoryManager().getAllChangeItems(issue);
 
-            List<UserStatuses> userStatuses = CollectorUtils.reduceUserStatuses(
-                    CollectorUtils.getUserStatuses(
-                        new Users(CollectorUtils.getUserRanges(items, issue)),
-                        new Statuses(CollectorUtils.getStatusRanges(items, issue))),
-                    statusIds);
+            Users users = new Users(CollectorUtils.getUserRanges(items, issue));
+            Statuses statuses = new Statuses(CollectorUtils.getStatusRanges(items, issue));
+            List<UserStatuses> userStatuses = CollectorUtils.getUserStatuses(users, statuses);
+            userStatuses = CollectorUtils.reduceUserStatuses(userStatuses, statusIds);
+            userStatuses = CollectorUtils.reduceUserStatusesByRange(userStatuses, new DateRange(startDate, endDate));
+
             for (UserStatuses userStatus : userStatuses) {
                 if (user != null && !user.getName().equalsIgnoreCase(userStatus.getUser())) {
                     continue;

@@ -1,8 +1,12 @@
 package ru.andreymarkelov.atlas.plugins.datacollector.struct;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import ru.andreymarkelov.atlas.plugins.datacollector.RangeUtils;
 
 public class StatusUsers implements ICalculatedTotal {
     private String status;
@@ -50,11 +54,35 @@ public class StatusUsers implements ICalculatedTotal {
         return getRangesTime(users.get(user));
     }
 
+    public boolean isValid() {
+        return !users.isEmpty();
+    }
+
     public void putUser(String user, List<DateRange> range) {
         if (users.containsKey(user)) {
             users.get(user).addAll(range);
         } else {
             users.put(user, range);
+        }
+    }
+
+    public void reduceByRange(DateRange intDr) {
+        Iterator<Map.Entry<String, List<DateRange>>> entryIter = users.entrySet().iterator();
+        while (entryIter.hasNext()) {
+            Map.Entry<String, List<DateRange>> entry = entryIter.next();
+            List<DateRange> ranges = entry.getValue();
+            List<DateRange> newRanges = new ArrayList<DateRange>();
+            for (DateRange dr : ranges) {
+                DateRange intersection = RangeUtils.getIntersectionRange(dr, intDr);
+                if (intersection != null) {
+                    newRanges.add(intersection);
+                }
+            }
+            if (newRanges.isEmpty()) {
+                entryIter.remove();
+            } else {
+                entry.setValue(newRanges);
+            }
         }
     }
 
