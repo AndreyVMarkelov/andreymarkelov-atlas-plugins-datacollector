@@ -1,0 +1,1 @@
+#if($color)<span style="color:$color">$!value</span>#else$!value#end

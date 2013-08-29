@@ -1,8 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <atlassian-plugin key="${project.groupId}.${project.artifactId}" name="${project.name}" plugins-version="2">
     <plugin-info>
         <description>${project.description}</description>
         <version>${project.version}</version>
-        <vendor name="${project.organization.name}" url="${project.organization.url}" />
+        <vendor name="${project.organization.name}" url="${project.organization.url}"/>
         <param name="plugin-icon">images/icon.png</param>
         <param name="plugin-logo">images/logo.png</param>
     </plugin-info>
@@ -107,8 +108,7 @@
         </properties>
     </report>
 
-    <issue-tabpanel key="user-status-panel" name="User/Status Statistics"
-            i18n-namekey="datacollector.user-status-panel" class="ru.andreymarkelov.atlas.plugins.datacollector.UserCollectorTab">
+    <issue-tabpanel key="user-status-panel" name="User/Status Statistics" i18n-namekey="datacollector.user-status-panel" class="ru.andreymarkelov.atlas.plugins.datacollector.UserCollectorTab">
         <resource type="i18n" name="i18n" location="datacollector"/>
         <description>Show Subversion commits related to an issue in an issue tab panel.</description>
         <label key="datacollector.user-status-panel"/>
@@ -116,8 +116,7 @@
         <supports-ajax-load>true</supports-ajax-load>
     </issue-tabpanel>
 
-    <issue-tabpanel key="status-user-panel" name="Status/User Statistics"
-            i18n-namekey="datacollector.status-user-panel" class="ru.andreymarkelov.atlas.plugins.datacollector.StatusCollectorTab">
+    <issue-tabpanel key="status-user-panel" name="Status/User Statistics" i18n-namekey="datacollector.status-user-panel" class="ru.andreymarkelov.atlas.plugins.datacollector.StatusCollectorTab">
         <resource type="i18n" name="i18n" location="datacollector"/>
         <description>Show Subversion commits related to an issue in an issue tab panel.</description>
         <label key="datacollector.status-user-panel"/>
@@ -135,5 +134,24 @@
     </web-resource>
 
     <!-- import from the product container -->
-    <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties" />
+    <component key="datacollector-plugindata" class="ru.andreymarkelov.atlas.plugins.datacollector.customfield.PluginDataImpl" public="true">
+        <interface>ru.andreymarkelov.atlas.plugins.datacollector.customfield.PluginData</interface>
+    </component>
+    <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties"/>
+    <component-import key="pluginSettingsFactory" interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory"/>
+    <component-import key="renderer" interface="com.atlassian.templaterenderer.velocity.one.six.VelocityTemplateRenderer" />
+
+    <customfield-type name="Statuses Time Sum CF" i18n-name-key="statuses-time-sum-cf.name" key="statuses-time-sum-cf" class="ru.andreymarkelov.atlas.plugins.datacollector.customfield.StatusesTimeSumCF">
+        <description key="statuses-time-sum-cf.description">The Statuses Time Sum CF Plugin</description>
+        <resource name="view" type="velocity" location="/templates/customfields/statuses-time-sum-cf/view.vm"/>
+    </customfield-type>
+
+    <webwork1 key="datacollector-field-configaction" name="Statuses Time Sum CF configuration action" class="java.lang.Object">
+        <description>The action for editing a Statuses Time Sum custom field type configuration.</description>
+        <actions>
+            <action name="ru.andreymarkelov.atlas.plugins.datacollector.customfield.EditConfiguration" alias="EditConfiguration">
+                <view name="input">/templates/customfields/statuses-time-sum-cf/edit-config.vm</view>
+            </action>
+        </actions>
+    </webwork1>
 </atlassian-plugin>
