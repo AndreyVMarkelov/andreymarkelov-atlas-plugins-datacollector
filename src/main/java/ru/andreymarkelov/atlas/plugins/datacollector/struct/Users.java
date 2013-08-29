@@ -11,12 +11,13 @@ public class Users {
     public Users(List<UserDateRange> ranges) {
         users = new HashMap<String, List<DateRange>>();
         for (UserDateRange range : ranges) {
-            if (users.containsKey(range.getUser())) {
-                users.get(range.getUser()).add(range);
+            String currUser = range.getUser().toLowerCase().trim();
+            if (users.containsKey(currUser)) {
+                users.get(currUser).add(range);
             } else {
                 List<DateRange> userRange = new ArrayList<DateRange>();
                 userRange.add(range);
-                users.put(range.getUser(), userRange);
+                users.put(currUser, userRange);
             }
         }
     }

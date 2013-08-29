@@ -41,9 +41,9 @@ public class AssigneeHistoryReport extends AbstractReport {
     private List<Issue> getIssuesFromProject(Long pid, Date startDate, Date endDate) throws SearchException {
         Query q;
         if (startDate != null && endDate == null) {
-            q = JqlQueryBuilder.newBuilder().where().project(pid).and().createdAfter(startDate).buildQuery();
+            q = JqlQueryBuilder.newBuilder().where().project(pid).and().updated().gtEq(startDate).buildQuery();
         } else if (startDate != null && endDate != null) {
-            q = JqlQueryBuilder.newBuilder().where().project(pid).and().createdBetween(startDate, endDate).buildQuery();
+            q = JqlQueryBuilder.newBuilder().where().project(pid).and().created().ltEq(endDate).and().updated().gtEq(startDate).buildQuery();
         } else if (startDate == null && endDate != null) {
             q = JqlQueryBuilder.newBuilder().where().project(pid).and().created().ltEq(endDate).buildQuery();
         } else {
@@ -92,20 +92,21 @@ public class AssigneeHistoryReport extends AbstractReport {
                         new Statuses(CollectorUtils.getStatusRanges(items, issue))),
                     statusIds);
             for (UserStatuses userStatus : userStatuses) {
-                if (user != null && !user.getName().equals(userStatus.getUser())) {
+                if (user != null && !user.getName().equalsIgnoreCase(userStatus.getUser())) {
                     continue;
                 }
 
-                if (usersData.containsKey(userStatus.getUser())) {
-                    List<UserStatuses> userStatuses1 = new ArrayList<UserStatuses>();
-                    userStatuses1.add(userStatus);
-                    usersData.get(userStatus.getUser()).add(new IssueDataKeeper(issue.getKey(), issue.getSummary(), userStatuses1));
+                String currUser = userStatus.getUser().toLowerCase().trim();
+                if (usersData.containsKey(currUser)) {
+                    List<UserStatuses> userStatusesNew = new ArrayList<UserStatuses>();
+                    userStatusesNew.add(userStatus);
+                    usersData.get(currUser).add(new IssueDataKeeper(issue.getKey(), issue.getSummary(), userStatusesNew));
                 } else {
-                    List<IssueDataKeeper> id = new ArrayList<IssueDataKeeper>();
-                    List<UserStatuses> userStatuses1 = new ArrayList<UserStatuses>();
-                    userStatuses1.add(userStatus);
-                    id.add(new IssueDataKeeper(issue.getKey(), issue.getSummary(), userStatuses1));
-                    usersData.put(userStatus.getUser(), id);
+                    List<IssueDataKeeper> keepers = new ArrayList<IssueDataKeeper>();
+                    List<UserStatuses> userStatusesNew = new ArrayList<UserStatuses>();
+                    userStatusesNew.add(userStatus);
+                    keepers.add(new IssueDataKeeper(issue.getKey(), issue.getSummary(), userStatusesNew));
+                    usersData.put(currUser, keepers);
                 }
             }
         }

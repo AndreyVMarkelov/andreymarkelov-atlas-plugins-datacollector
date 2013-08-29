@@ -46,9 +46,9 @@ public class DataCollectorIssueHistoryReport extends AbstractReport {
     private List<Issue> getIssuesFromProject(Long pid, Date startDate, Date endDate) throws SearchException {
         Query q;
         if (startDate != null && endDate == null) {
-            q = JqlQueryBuilder.newBuilder().where().project(pid).and().createdAfter(startDate).buildQuery();
+            q = JqlQueryBuilder.newBuilder().where().project(pid).and().updated().gtEq(startDate).buildQuery();
         } else if (startDate != null && endDate != null) {
-            q = JqlQueryBuilder.newBuilder().where().project(pid).and().createdBetween(startDate, endDate).buildQuery();
+            q = JqlQueryBuilder.newBuilder().where().project(pid).and().created().ltEq(endDate).and().updated().gtEq(startDate).buildQuery();
         } else if (startDate == null && endDate != null) {
             q = JqlQueryBuilder.newBuilder().where().project(pid).and().created().ltEq(endDate).buildQuery();
         } else {
