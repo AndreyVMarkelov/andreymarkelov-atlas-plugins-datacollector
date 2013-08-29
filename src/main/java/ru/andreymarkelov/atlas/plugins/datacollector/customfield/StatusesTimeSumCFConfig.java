@@ -19,19 +19,19 @@ import com.atlassian.templaterenderer.TemplateRenderer;
 public class StatusesTimeSumCFConfig implements FieldConfigItemType {
     private static final Logger logger = Logger.getLogger(StatusesTimeSumCFConfig.class);
 
-    private final PluginData pluginData;
+    private final StatusesTimeSumPluginData pluginData;
     private final TemplateRenderer renderer;
 
     public StatusesTimeSumCFConfig(
             TemplateRenderer renderer,
-            PluginData pluginData) {
+            StatusesTimeSumPluginData pluginData) {
         this.renderer = renderer;
         this.pluginData = pluginData;
     }
 
     @Override
     public String getBaseEditUrl() {
-        return "EditConfiguration!default.jspa";
+        return "StatusesDataEditConfiguration!default.jspa";
     }
 
     @Override

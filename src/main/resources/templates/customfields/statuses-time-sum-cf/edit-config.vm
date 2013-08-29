@@ -7,7 +7,7 @@
     </head>
     <body>
         <h2 class="formtitle">$i18n.getText('statuses-time-sum-cf.configure.title')</h2>
-        <form action="EditConfiguration.jspa" method="post">
+        <form action="StatusesDataEditConfiguration.jspa" method="post">
             <input type="hidden" name="fieldConfigId" value="$fieldConfigId">
             <table>
                 <tr>

@@ -134,8 +134,8 @@
     </web-resource>
 
     <!-- import from the product container -->
-    <component key="datacollector-plugindata" class="ru.andreymarkelov.atlas.plugins.datacollector.customfield.PluginDataImpl" public="true">
-        <interface>ru.andreymarkelov.atlas.plugins.datacollector.customfield.PluginData</interface>
+    <component key="datacollector-plugindata" class="ru.andreymarkelov.atlas.plugins.datacollector.customfield.StatusesTimeSumPluginDataImpl" public="true">
+        <interface>ru.andreymarkelov.atlas.plugins.datacollector.customfield.StatusesTimeSumPluginData</interface>
     </component>
     <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties"/>
     <component-import key="pluginSettingsFactory" interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory"/>
@@ -149,7 +149,7 @@
     <webwork1 key="datacollector-field-configaction" name="Statuses Time Sum CF configuration action" class="java.lang.Object">
         <description>The action for editing a Statuses Time Sum custom field type configuration.</description>
         <actions>
-            <action name="ru.andreymarkelov.atlas.plugins.datacollector.customfield.EditConfiguration" alias="EditConfiguration">
+            <action name="ru.andreymarkelov.atlas.plugins.datacollector.customfield.StatusesDataEditConfiguration" alias="StatusesDataEditConfiguration">
                 <view name="input">/templates/customfields/statuses-time-sum-cf/edit-config.vm</view>
             </action>
         </actions>

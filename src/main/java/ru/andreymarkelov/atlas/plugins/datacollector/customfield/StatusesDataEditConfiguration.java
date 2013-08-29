@@ -10,20 +10,20 @@ import com.atlassian.jira.issue.status.Status;
 import com.atlassian.jira.security.Permissions;
 import com.atlassian.jira.web.action.admin.customfields.AbstractEditConfigurationItemAction;
 
-public class EditConfiguration extends AbstractEditConfigurationItemAction {
+public class StatusesDataEditConfiguration extends AbstractEditConfigurationItemAction {
     /**
      * Unique ID.
      */
     private static final long serialVersionUID = -2008545966379826688L;
 
-    private final PluginData pluginData;
+    private final StatusesTimeSumPluginData pluginData;
 
     private String[] statuses;
     private String compareField;
 
-    public EditConfiguration(
+    public StatusesDataEditConfiguration(
             ManagedConfigurationItemService managedConfigurationItemService,
-            PluginData pluginData) {
+            StatusesTimeSumPluginData pluginData) {
         super(managedConfigurationItemService);
         this.pluginData = pluginData;
     }

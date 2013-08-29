@@ -23,11 +23,11 @@ import ru.andreymarkelov.atlas.plugins.datacollector.struct.Statuses;
 import ru.andreymarkelov.atlas.plugins.datacollector.struct.Users;
 
 public class StatusesTimeSumCF extends CalculatedCFType<String, String> {
-    private final PluginData pluginData;
+    private final StatusesTimeSumPluginData pluginData;
     private final TemplateRenderer renderer;
 
     public StatusesTimeSumCF(
-            PluginData pluginData,
+            StatusesTimeSumPluginData pluginData,
             TemplateRenderer renderer) {
         this.pluginData = pluginData;
         this.renderer = renderer;

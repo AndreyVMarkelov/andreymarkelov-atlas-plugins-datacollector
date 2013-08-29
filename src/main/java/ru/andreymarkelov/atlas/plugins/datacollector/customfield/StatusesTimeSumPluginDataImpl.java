@@ -4,7 +4,7 @@ import com.atlassian.jira.issue.fields.config.FieldConfig;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 
-public class PluginDataImpl implements PluginData {
+public class StatusesTimeSumPluginDataImpl implements StatusesTimeSumPluginData {
     /**
      * Plug-In Jira db key.
      */
@@ -15,7 +15,7 @@ public class PluginDataImpl implements PluginData {
      */
     private final PluginSettings pluginSettings;
 
-    public PluginDataImpl(PluginSettingsFactory pluginSettingsFactory) {
+    public StatusesTimeSumPluginDataImpl(PluginSettingsFactory pluginSettingsFactory) {
         this.pluginSettings = pluginSettingsFactory.createSettingsForKey(PLUGIN_KEY);;
     }
 
