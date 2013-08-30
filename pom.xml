@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.andreymarkelov.atlas.plugins</groupId>
     <artifactId>datacollector</artifactId>
-    <version>1.0.9.1</version>
+    <version>1.0.9.5</version>
     <organization>
         <name>Andrey Markelov</name>
         <url>http://ru.linkedin.com/in/andreymarkelov/</url>

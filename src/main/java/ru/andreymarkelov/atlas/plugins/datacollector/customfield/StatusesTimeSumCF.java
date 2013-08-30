@@ -2,12 +2,15 @@ package ru.andreymarkelov.atlas.plugins.datacollector.customfield;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.changehistory.ChangeHistoryItem;
+import com.atlassian.jira.issue.customfields.SortableCustomField;
 import com.atlassian.jira.issue.customfields.impl.CalculatedCFType;
 import com.atlassian.jira.issue.customfields.impl.FieldValidationException;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.fields.CustomField;
+import com.atlassian.jira.issue.fields.config.FieldConfig;
 import com.atlassian.jira.issue.fields.config.FieldConfigItemType;
 import com.atlassian.jira.issue.fields.layout.field.FieldLayoutItem;
+import com.atlassian.jira.util.NotNull;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import com.atlassian.util.concurrent.Nullable;
 
@@ -22,7 +25,7 @@ import ru.andreymarkelov.atlas.plugins.datacollector.struct.StatusUsers;
 import ru.andreymarkelov.atlas.plugins.datacollector.struct.Statuses;
 import ru.andreymarkelov.atlas.plugins.datacollector.struct.Users;
 
-public class StatusesTimeSumCF extends CalculatedCFType<String, String> {
+public class StatusesTimeSumCF extends CalculatedCFType<Long, Long> implements SortableCustomField<Long> {
     private final StatusesTimeSumPluginData pluginData;
     private final TemplateRenderer renderer;
 
@@ -31,6 +34,11 @@ public class StatusesTimeSumCF extends CalculatedCFType<String, String> {
             TemplateRenderer renderer) {
         this.pluginData = pluginData;
         this.renderer = renderer;
+    }
+
+    @Override
+    public int compare(@NotNull Long val1, @NotNull Long val2, FieldConfig fc) {
+        return val1.compareTo(val2);
     }
 
     @Override
@@ -63,24 +71,28 @@ public class StatusesTimeSumCF extends CalculatedCFType<String, String> {
     }
 
     @Override
-    public String getSingularObjectFromString(String str) throws FieldValidationException {
-        return str;
+    public Long getSingularObjectFromString(String str) throws FieldValidationException {
+        return Long.valueOf(str);
     }
 
     @Override
-    public String getStringFromSingularObject(String str) {
-        return str;
+    public String getStringFromSingularObject(Long val) {
+        if (val != null) {
+            return new RendererHelper().renderSpentTime(val.longValue());
+        } else {
+            return "";
+        }
     }
 
     @Override
     @Nullable
-    public String getValueFromIssue(CustomField field, Issue issue) {
-        if (issue == null || issue.getKey() == null) {
-            return "";
+    public Long getValueFromIssue(CustomField field, Issue issue) {
+        if (issue == null || issue.getKey() == null || field == null || field.getRelevantConfig(issue) == null) {
+            return 0L;
         }
 
         StatusesTimeSumData data = pluginData.getJSONFieldData(field.getRelevantConfig(issue));
-        return new RendererHelper().renderSpentTime(getIssueStatusesTime(field, issue, data));
+        return getIssueStatusesTime(field, issue, data);
     }
 
     @Override
@@ -90,13 +102,12 @@ public class StatusesTimeSumCF extends CalculatedCFType<String, String> {
             final FieldLayoutItem fieldLayoutItem) {
         final Map<String, Object> map = super.getVelocityParameters(issue, field, fieldLayoutItem);
 
-        if (issue == null || issue.getKey() == null) {
+        if (issue == null || issue.getKey() == null || field == null || field.getRelevantConfig(issue) == null) {
             return map;
         }
 
         StatusesTimeSumData data = pluginData.getJSONFieldData(field.getRelevantConfig(issue));
         long realVal = getIssueStatusesTime(field, issue, data);
-        map.put("value", new RendererHelper().renderSpentTime(realVal));
 
         if (data.getCompareField() != null) {
             CustomField cf = ComponentAccessor.getCustomFieldManager().getCustomFieldObject(data.getCompareField());
@@ -106,6 +117,9 @@ public class StatusesTimeSumCF extends CalculatedCFType<String, String> {
                 map.put("color", color);
             }
         }
+
+        map.put("renderhelper", new RendererHelper());
+        map.put("value", realVal);
 
         return map;
     }

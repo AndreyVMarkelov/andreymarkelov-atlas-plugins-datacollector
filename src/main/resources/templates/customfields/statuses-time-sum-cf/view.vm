@@ -1,1 +1,7 @@
-#if($color)<span style="color:$color">$!value</span>#else$!value#end
+#if($value && $value != "0")
+    #if($color)
+        <span style="color:$color">$renderhelper.renderSpentTime($value)</span>
+    #else
+        $renderhelper.renderSpentTime($value)
+    #end
+#end

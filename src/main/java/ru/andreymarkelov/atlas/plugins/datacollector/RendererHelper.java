@@ -5,13 +5,14 @@ import java.net.URLEncoder;
 
 import ru.andreymarkelov.atlas.plugins.datacollector.struct.DateRange;
 
-import com.atlassian.core.util.DateUtils;
+import com.atlassian.core.util.DateUtils.Duration;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.config.ConstantsManager;
 import com.atlassian.jira.issue.status.Status;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.util.UserManager;
+import com.atlassian.jira.util.I18nHelper;
 
 public class RendererHelper {
     private UserManager userMgr;
@@ -26,12 +27,68 @@ public class RendererHelper {
         context = ComponentAccessor.getJiraAuthenticationContext();
     }
 
+    private String getDurationPrettySeconds(
+            long numSecs,
+            I18nHelper i18n,
+            boolean secondResolution) {
+        if (numSecs == 0) {
+            if (secondResolution) {
+                return "0 " + i18n.getText("datacollector.dateutils.seconds");
+            } else {
+                return "0 " + i18n.getText("datacollector.dateutils.minutes");
+            }
+        }
+
+        StringBuffer result = new StringBuffer();
+        if (numSecs >= Duration.HOUR.getSeconds()) {
+            long hours = numSecs / Duration.HOUR.getSeconds();
+            result.append(hours).append(' ');
+            if (hours > 1) {
+                result.append(i18n.getText("datacollector.dateutils.hours"));
+            } else {
+                result.append(i18n.getText("datacollector.dateutils.hour"));
+            }
+            result.append(", ");
+            numSecs = numSecs % Duration.HOUR.getSeconds();
+        }
+
+        if (numSecs >= Duration.MINUTE.getSeconds()) {
+            long minute = numSecs / Duration.MINUTE.getSeconds();
+            result.append(minute).append(' ');
+            if (minute > 1) {
+                result.append(i18n.getText("datacollector.dateutils.minutes"));
+            } else {
+                result.append(i18n.getText("datacollector.dateutils.minute"));
+            }
+            result.append(", ");
+            if (secondResolution) {
+                numSecs = numSecs % Duration.MINUTE.getSeconds();
+            }
+        }
+
+        if (numSecs >= 1 && numSecs < Duration.MINUTE.getSeconds()) {
+            result.append(numSecs).append(' ');
+            if (numSecs > 1) {
+                result.append(i18n.getText("datacollector.dateutils.seconds"));
+            } else {
+                result.append(i18n.getText("datacollector.dateutils.second"));
+            }
+            result.append(", ");
+        }
+
+        if (result.length() > 2) {
+            return result.substring(0, result.length() - 2);
+        } else {
+            return result.toString();
+        }
+    }
+
     public String renderDate(DateRange range) {
         return context.getOutlookDate().formatDMYHMS(range.getFrom()).concat(" - ").concat(context.getOutlookDate().formatDMYHMS(range.getTo()));
     }
 
     public String renderSpentTime(long spent) {
-        return DateUtils.getDurationPretty(spent, context.getI18nHelper().getDefaultResourceBundle());
+        return getDurationPrettySeconds(spent, context.getI18nHelper(), false);
     }
 
     public String renderStatus(String status) {
