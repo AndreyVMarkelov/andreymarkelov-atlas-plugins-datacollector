@@ -26,6 +26,7 @@ import ru.andreymarkelov.atlas.plugins.datacollector.struct.Statuses;
 import ru.andreymarkelov.atlas.plugins.datacollector.struct.Users;
 
 public class StatusesTimeSumCF extends CalculatedCFType<Long, Long> implements SortableCustomField<Long> {
+    private final static Long ZERO = Long.valueOf(0L);
     private final StatusesTimeSumPluginData pluginData;
     private final TemplateRenderer renderer;
 
@@ -75,7 +76,7 @@ public class StatusesTimeSumCF extends CalculatedCFType<Long, Long> implements S
         try {
             return Long.valueOf(str);
         } catch (Exception ex) {
-            return 0L;
+            return ZERO;
         }
     }
 
@@ -122,6 +123,7 @@ public class StatusesTimeSumCF extends CalculatedCFType<Long, Long> implements S
             }
         }
 
+        map.put("zero", ZERO);
         map.put("renderhelper", new RendererHelper());
         map.put("value", realVal);
 
