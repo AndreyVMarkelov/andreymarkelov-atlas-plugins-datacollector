@@ -141,8 +141,8 @@
     <component-import key="pluginSettingsFactory" interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory"/>
     <component-import key="renderer" interface="com.atlassian.templaterenderer.velocity.one.six.VelocityTemplateRenderer" />
 
-    <customfield-type name="Statuses Time Sum CF" i18n-name-key="statuses-time-sum-cf.name" key="statuses-time-sum-cf" class="ru.andreymarkelov.atlas.plugins.datacollector.customfield.StatusesTimeSumCF">
-        <description key="statuses-time-sum-cf.description">The Statuses Time Sum CF Plugin</description>
+    <customfield-type name="Statuses Time Sum Custom Field" i18n-name-key="statuses-time-sum-cf.name" key="statuses-time-sum-cf" class="ru.andreymarkelov.atlas.plugins.datacollector.customfield.StatusesTimeSumCF">
+        <description key="statuses-time-sum-cf.description">The Statuses Time Sum Custom Field</description>
         <resource type="velocity" name="view" location="/templates/customfields/statuses-time-sum-cf/view.vm"/>
         <resource type="velocity" name="column-view" location="/templates/customfields/statuses-time-sum-cf/view.vm"/>
         <resource type="velocity" name="xml" location="/templates/customfields/statuses-time-sum-cf/xml.vm"/>

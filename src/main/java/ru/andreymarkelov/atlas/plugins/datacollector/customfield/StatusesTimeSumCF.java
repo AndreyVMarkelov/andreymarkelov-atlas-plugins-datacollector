@@ -72,7 +72,11 @@ public class StatusesTimeSumCF extends CalculatedCFType<Long, Long> implements S
 
     @Override
     public Long getSingularObjectFromString(String str) throws FieldValidationException {
-        return Long.valueOf(str);
+        try {
+            return Long.valueOf(str);
+        } catch (Exception ex) {
+            return 0L;
+        }
     }
 
     @Override

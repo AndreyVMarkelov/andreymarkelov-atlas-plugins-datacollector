@@ -13,7 +13,9 @@ public class StatusesTimeSumDataTranslator {
         try {
             JSONObject jsonObj = new JSONObject(json);
             StatusesTimeSumData data = new StatusesTimeSumData();
-            data.setCompareField(jsonObj.getString("compareField"));
+            if (jsonObj.has("compareField")) {
+                data.setCompareField(jsonObj.getString("compareField"));
+            }
             JSONArray statuses = jsonObj.getJSONArray("statuses");
             for (int i = 0; i < statuses.length(); i++) {
                 data.addStatus(statuses.getString(i));
@@ -33,8 +35,10 @@ public class StatusesTimeSumDataTranslator {
                 statuses.put(statusId);
             }
             jsonObj.put("statuses", statuses);
-            jsonObj.put("compareField", obj.getCompareField());
-            
+
+            if (obj.getCompareField() != null) {
+                jsonObj.put("compareField", obj.getCompareField());
+            }
         } catch (JSONException e) {
             logger.error("Error write JSON", e);
             return null;

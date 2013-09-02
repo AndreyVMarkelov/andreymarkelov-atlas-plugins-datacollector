@@ -10,7 +10,7 @@
         <form action="StatusesDataEditConfiguration.jspa" method="post">
             <input type="hidden" name="fieldConfigId" value="$fieldConfigId">
             <table>
-                <tr>
+            <!-- <tr>
                     <td>$i18n.getText('statuses-time-sum-cf.configure.compfield'):</td>
                     <td>
                         <select id="compareField" name="compareField">
@@ -20,7 +20,7 @@
                             #end
                         </select>
                     </td>
-                </tr>
+                </tr> -->
                 <tr>
                     <td>$i18n.getText('statuses-time-sum-cf.configure.statuses'):</td>
                     <td>
