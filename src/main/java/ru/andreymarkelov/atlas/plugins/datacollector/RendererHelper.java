@@ -9,6 +9,8 @@ import com.atlassian.core.util.DateUtils.Duration;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.config.ConstantsManager;
+import com.atlassian.jira.datetime.DateTimeFormatter;
+import com.atlassian.jira.datetime.DateTimeFormatterFactory;
 import com.atlassian.jira.issue.status.Status;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.user.util.UserManager;
@@ -84,7 +86,9 @@ public class RendererHelper {
     }
 
     public String renderDate(DateRange range) {
-        return context.getOutlookDate().formatDMYHMS(range.getFrom()).concat(" - ").concat(context.getOutlookDate().formatDMYHMS(range.getTo()));
+        DateTimeFormatterFactory dateTimeFormatterFactory = ComponentAccessor.getComponent(DateTimeFormatterFactory.class);
+        DateTimeFormatter dtf = dateTimeFormatterFactory.formatter().forLoggedInUser();
+        return dtf.format(range.getFrom()).concat(" - ").concat(dtf.format(range.getTo())).concat(" : ").concat(renderSpentTime(range.getDistanceInSecs()));
     }
 
     public String renderSpentTime(long spent) {

@@ -11,6 +11,10 @@ public class DateRange {
         this.to = to;
     }
 
+    public long getDistanceInSecs() {
+        return getDistance()/1000;
+    }
+
     public long getDistance() {
         return to.getTime() - from.getTime();
     }
