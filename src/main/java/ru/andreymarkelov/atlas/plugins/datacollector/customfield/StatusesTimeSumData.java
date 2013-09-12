@@ -6,6 +6,7 @@ import java.util.List;
 public class StatusesTimeSumData {
     private List<String> statuses;
     private String compareField;
+    private long approveTime;
 
     public StatusesTimeSumData() {
         this.statuses = new ArrayList<String>();
@@ -20,12 +21,20 @@ public class StatusesTimeSumData {
         this.statuses.add(statusId);
     }
 
+    public long getApproveTime() {
+        return approveTime;
+    }
+
     public String getCompareField() {
         return compareField;
     }
 
     public List<String> getStatuses() {
         return statuses;
+    }
+
+    public void setApproveTime(long approveTime) {
+        this.approveTime = approveTime;
     }
 
     public void setCompareField(String compareField) {
@@ -38,6 +47,6 @@ public class StatusesTimeSumData {
 
     @Override
     public String toString() {
-        return "StatusesTimeSumData[statuses=" + statuses + ", compareField=" + compareField + "]";
+        return "StatusesTimeSumData [statuses=" + statuses + ", compareField=" + compareField + ", approveTime=" + approveTime + "]";
     }
 }

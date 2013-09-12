@@ -16,6 +16,9 @@ public class StatusesTimeSumDataTranslator {
             if (jsonObj.has("compareField")) {
                 data.setCompareField(jsonObj.getString("compareField"));
             }
+            if (jsonObj.has("approveTime")) {
+                data.setApproveTime(jsonObj.getLong("approveTime"));
+            }
             JSONArray statuses = jsonObj.getJSONArray("statuses");
             for (int i = 0; i < statuses.length(); i++) {
                 data.addStatus(statuses.getString(i));
@@ -35,6 +38,10 @@ public class StatusesTimeSumDataTranslator {
                 statuses.put(statusId);
             }
             jsonObj.put("statuses", statuses);
+
+            if (obj.getApproveTime() > 0) {
+                jsonObj.put("approveTime", obj.getApproveTime());
+            }
 
             if (obj.getCompareField() != null) {
                 jsonObj.put("compareField", obj.getCompareField());

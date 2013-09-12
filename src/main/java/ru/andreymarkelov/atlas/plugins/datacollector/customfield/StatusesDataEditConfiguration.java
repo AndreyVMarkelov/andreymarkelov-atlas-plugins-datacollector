@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.jira.config.managedconfiguration.ManagedConfigurationItemService;
 import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.issue.status.Status;
 import com.atlassian.jira.security.Permissions;
@@ -20,11 +19,10 @@ public class StatusesDataEditConfiguration extends AbstractEditConfigurationItem
 
     private String[] statuses;
     private String compareField;
+    private String approveTime;
 
     public StatusesDataEditConfiguration(
-            ManagedConfigurationItemService managedConfigurationItemService,
             StatusesTimeSumPluginData pluginData) {
-        super(managedConfigurationItemService);
         this.pluginData = pluginData;
     }
 
@@ -52,6 +50,10 @@ public class StatusesDataEditConfiguration extends AbstractEditConfigurationItem
         return getRedirect("/secure/admin/ConfigureCustomField!default.jspa?customFieldId=" + getFieldConfig().getCustomField().getIdAsLong().toString());
     }
 
+    public String getApproveTime() {
+        return approveTime;
+    }
+
     public String getCompareField() {
         return compareField;
     }
@@ -73,6 +75,10 @@ public class StatusesDataEditConfiguration extends AbstractEditConfigurationItem
             return false;
         }
         return Arrays.binarySearch(statuses, status) >= 0;
+    }
+
+    public void setApproveTime(String approveTime) {
+        this.approveTime = approveTime;
     }
 
     public void setCompareField(String compareField) {

@@ -4,8 +4,10 @@
         <description>${project.description}</description>
         <version>${project.version}</version>
         <vendor name="${project.organization.name}" url="${project.organization.url}"/>
-        <param name="plugin-icon">images/icon.png</param>
+        <param name="plugin-icon">images/logo.png</param>
         <param name="plugin-logo">images/logo.png</param>
+        <param name="vendor-icon">/media/icon.png</param>
+        <param name="vendor-logo">/media/logo.png</param>
     </plugin-info>
 
     <!-- add our i18n resource -->
@@ -52,6 +54,7 @@
         </properties>
     </report>
 
+    <!-- Reports -->
     <report key="datacollector-am-issuehistory-report" name="Issue History Statistics" class="ru.andreymarkelov.atlas.plugins.datacollector.DataCollectorIssueHistoryReport">
         <description key="datacollector.report.desc"/>
         <label key="datacollector.report"/>
@@ -108,23 +111,24 @@
         </properties>
     </report>
 
+    <!-- Tabs -->
     <issue-tabpanel key="user-status-panel" name="User/Status Statistics" i18n-namekey="datacollector.user-status-panel" class="ru.andreymarkelov.atlas.plugins.datacollector.UserCollectorTab">
         <resource type="i18n" name="i18n" location="datacollector"/>
-        <description>Show Subversion commits related to an issue in an issue tab panel.</description>
         <label key="datacollector.user-status-panel"/>
+        <description key="datacollector.user-status-panel.desc"/>
         <resource type="velocity" name="view" location="templates/collector/user-tabcollector.vm"/>
         <supports-ajax-load>true</supports-ajax-load>
     </issue-tabpanel>
 
     <issue-tabpanel key="status-user-panel" name="Status/User Statistics" i18n-namekey="datacollector.status-user-panel" class="ru.andreymarkelov.atlas.plugins.datacollector.StatusCollectorTab">
         <resource type="i18n" name="i18n" location="datacollector"/>
-        <description>Show Subversion commits related to an issue in an issue tab panel.</description>
         <label key="datacollector.status-user-panel"/>
+        <description key="datacollector.status-user-panel.desc"/>
         <resource type="velocity" name="view" location="templates/collector/status-tabcollector.vm"/>
         <supports-ajax-load>true</supports-ajax-load>
     </issue-tabpanel>
 
-    <!-- add our web resources -->
+    <!-- Add our web resources -->
     <web-resource key="datacollector-resources" name="datacollector Web Resources">
         <dependency>com.atlassian.auiplugin:ajs</dependency>
         <resource type="download" name="datacollector.css" location="/css/datacollector.css"/>
@@ -141,8 +145,9 @@
     <component-import key="pluginSettingsFactory" interface="com.atlassian.sal.api.pluginsettings.PluginSettingsFactory"/>
     <component-import key="renderer" interface="com.atlassian.templaterenderer.velocity.one.six.VelocityTemplateRenderer" />
 
+    <!-- Custom fields -->
     <customfield-type name="Statuses Time Sum Custom Field" i18n-name-key="statuses-time-sum-cf.name" key="statuses-time-sum-cf" class="ru.andreymarkelov.atlas.plugins.datacollector.customfield.StatusesTimeSumCF">
-        <description key="statuses-time-sum-cf.description">The Statuses Time Sum Custom Field</description>
+        <description key="statuses-time-sum-cf.description"/>
         <resource type="velocity" name="view" location="/templates/customfields/statuses-time-sum-cf/view.vm"/>
         <resource type="velocity" name="column-view" location="/templates/customfields/statuses-time-sum-cf/view.vm"/>
         <resource type="velocity" name="xml" location="/templates/customfields/statuses-time-sum-cf/xml.vm"/>
