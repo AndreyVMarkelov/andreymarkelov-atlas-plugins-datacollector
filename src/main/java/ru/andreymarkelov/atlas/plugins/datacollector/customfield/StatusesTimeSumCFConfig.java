@@ -37,7 +37,7 @@ public class StatusesTimeSumCFConfig implements FieldConfigItemType {
     @Override
     public Object getConfigurationObject(Issue issue, FieldConfig config) {
         Map<String, Object> parms = new HashMap<String, Object>();
-        StatusesTimeSumData data = pluginData.getJSONFieldData(config);
+        StatusesTimeSumData data = pluginData.getJSONFieldData("");
         if (data != null) {
             parms.put("statuses", data.getStatuses());
             parms.put("compareField", data.getCompareField());
@@ -63,7 +63,7 @@ public class StatusesTimeSumCFConfig implements FieldConfigItemType {
     @Override
     public String getViewHtml(FieldConfig config, FieldLayoutItem fieldLayoutItem) {
         Map<String, Object> parms = new HashMap<String, Object>();
-        StatusesTimeSumData data = pluginData.getJSONFieldData(config);
+        StatusesTimeSumData data = pluginData.getJSONFieldData("");
         if (data != null) {
             I18nHelper i18n = ComponentAccessor.getJiraAuthenticationContext().getI18nHelper();
             List<String> transletedStatuses = new ArrayList<String>();

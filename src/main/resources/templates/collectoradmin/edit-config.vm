@@ -1,0 +1,44 @@
+<html>
+    <head>
+        <title>$action.getTitle()</title>
+        <meta name="decorator" content="admin"/>
+        $webResourceManager.requireResource("jira.webresources:global-static")
+        $webResourceManager.requireResource("jira.webresources:jira-global")
+        $webResourceManager.requireResource("com.atlassian.auiplugin:ajs")
+        $webResourceManager.requireResource("jira.webresources:autocomplete")
+        $webResourceManager.requireResourcesForContext("jira.view.issue")
+    </head>
+    <body class="aui">
+        #if($action.hasAnyErrors())
+        <div class="aui-message error">
+            <span class="aui-icon icon-error"></span>
+            #foreach($error in $action.getErrorMessages())
+            <p><strong>$error</strong></p>
+            #end
+        </div>
+        #end
+        <h3>$action.getTitle()</h3>
+        <form class="aui" action="DataCollectorFieldConfiguration.jspa" method="post">
+            <input type="hidden" name="currentField" value="$currentField">
+            <input type="hidden" name="atl_token" value="$atl_token"/>
+            <div class="field-group">
+                <label for="statuses">$i18n.getText("datacollector.admin.conf.fields.statuses")</label>
+                <select id="statuses" name="statuses" multiple="multiple">
+                    #foreach($status in $action.getDefinedStatuses())
+                    <option #if($action.isStatus($status.getId()))selected="selected"#end value="$status.getId()">$status.getNameTranslation($i18n)</option>
+                    #end
+                </select>
+            </div>
+            <div class="field-group">
+                <label for="approveTime">$i18n.getText("datacollector.admin.conf.fields.approve")</label>
+                <input type="text" id="approveTime" name="approveTime" #if($!data.getApproveTime() > 0)value="$!data.getApproveTime()"#end/>
+            </div>
+            <div class="buttons-container">
+                <div class="buttons">
+                    <input class="button submit" type="submit" name="add" value="$action.getText("common.words.save")" accesskey="S" title="Press Alt+Shift+S to submit form"/>
+                    <a title="Press Alt+Shift+` to cancel" id="assign-issue-cancel" href="$action.getBackLink()" class="aui-button aui-button-link cancel" accesskey="`">$action.getText("common.words.cancel")</a>
+                </div>
+            </div>
+        </form>
+    </body>
+</html>

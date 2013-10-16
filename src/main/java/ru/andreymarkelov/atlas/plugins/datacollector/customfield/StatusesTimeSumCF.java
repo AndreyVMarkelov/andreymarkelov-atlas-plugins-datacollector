@@ -1,19 +1,5 @@
 package ru.andreymarkelov.atlas.plugins.datacollector.customfield;
 
-import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.jira.issue.changehistory.ChangeHistoryItem;
-import com.atlassian.jira.issue.customfields.SortableCustomField;
-import com.atlassian.jira.issue.customfields.impl.CalculatedCFType;
-import com.atlassian.jira.issue.customfields.impl.FieldValidationException;
-import com.atlassian.jira.issue.Issue;
-import com.atlassian.jira.issue.fields.CustomField;
-import com.atlassian.jira.issue.fields.config.FieldConfig;
-import com.atlassian.jira.issue.fields.config.FieldConfigItemType;
-import com.atlassian.jira.issue.fields.layout.field.FieldLayoutItem;
-import com.atlassian.jira.util.NotNull;
-import com.atlassian.templaterenderer.TemplateRenderer;
-import com.atlassian.util.concurrent.Nullable;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +10,20 @@ import ru.andreymarkelov.atlas.plugins.datacollector.struct.IssueDataKeeper;
 import ru.andreymarkelov.atlas.plugins.datacollector.struct.StatusUsers;
 import ru.andreymarkelov.atlas.plugins.datacollector.struct.Statuses;
 import ru.andreymarkelov.atlas.plugins.datacollector.struct.Users;
+
+import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.issue.Issue;
+import com.atlassian.jira.issue.changehistory.ChangeHistoryItem;
+import com.atlassian.jira.issue.customfields.SortableCustomField;
+import com.atlassian.jira.issue.customfields.impl.CalculatedCFType;
+import com.atlassian.jira.issue.customfields.impl.FieldValidationException;
+import com.atlassian.jira.issue.fields.CustomField;
+import com.atlassian.jira.issue.fields.config.FieldConfig;
+import com.atlassian.jira.issue.fields.config.FieldConfigItemType;
+import com.atlassian.jira.issue.fields.layout.field.FieldLayoutItem;
+import com.atlassian.jira.util.NotNull;
+import com.atlassian.templaterenderer.TemplateRenderer;
+import com.atlassian.util.concurrent.Nullable;
 
 public class StatusesTimeSumCF extends CalculatedCFType<Long, Long> implements SortableCustomField<Long> {
     private final static Long ZERO = Long.valueOf(0L);
@@ -96,22 +96,19 @@ public class StatusesTimeSumCF extends CalculatedCFType<Long, Long> implements S
             return 0L;
         }
 
-        StatusesTimeSumData data = pluginData.getJSONFieldData(field.getRelevantConfig(issue));
+        StatusesTimeSumData data = pluginData.getJSONFieldData(field.getId());
         return getIssueStatusesTime(field, issue, data);
     }
 
     @Override
-    public Map<String, Object> getVelocityParameters(
-            final Issue issue,
-            final CustomField field,
-            final FieldLayoutItem fieldLayoutItem) {
+    public Map<String, Object> getVelocityParameters(final Issue issue, final CustomField field, final FieldLayoutItem fieldLayoutItem) {
         final Map<String, Object> map = super.getVelocityParameters(issue, field, fieldLayoutItem);
 
         if (issue == null || issue.getKey() == null || field == null || field.getRelevantConfig(issue) == null) {
             return map;
         }
 
-        StatusesTimeSumData data = pluginData.getJSONFieldData(field.getRelevantConfig(issue));
+        StatusesTimeSumData data = pluginData.getJSONFieldData(field.getId());
         long realVal = getIssueStatusesTime(field, issue, data);
 
         if (data.getCompareField() != null) {

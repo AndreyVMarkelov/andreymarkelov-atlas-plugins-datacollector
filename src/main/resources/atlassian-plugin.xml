@@ -4,10 +4,10 @@
         <description>${project.description}</description>
         <version>${project.version}</version>
         <vendor name="${project.organization.name}" url="${project.organization.url}"/>
-        <param name="plugin-icon">images/logo.png</param>
-        <param name="plugin-logo">images/logo.png</param>
-        <param name="vendor-icon">/media/icon.png</param>
-        <param name="vendor-logo">/media/logo.png</param>
+        <param name="plugin-icon">images/timeIcon.png</param>
+        <param name="plugin-logo">images/timeLogo.png</param>
+        <param name="vendor-icon">images/vicon.png</param>
+        <param name="vendor-logo">images/vicon.png</param>
     </plugin-info>
 
     <!-- add our i18n resource -->
@@ -153,11 +153,41 @@
         <resource type="velocity" name="xml" location="/templates/customfields/statuses-time-sum-cf/xml.vm"/>
     </customfield-type>
 
-    <webwork1 key="datacollector-field-configaction" name="Statuses Time Sum CF configuration action" class="java.lang.Object">
-        <description>The action for editing a Statuses Time Sum custom field type configuration.</description>
+    <web-item key="datacollector-configuration" name="Configure Datacollecor Plug-In" section="system.admin/globalsettings" weight="95">
+        <label key="datacollector.admin.conf.title"/>
+        <conditions type="AND">
+            <condition class="com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition"><param name="permission">admin</param></condition>
+            <condition class="ru.andreymarkelov.atlas.plugins.datacollector.IsPriorToJiraVersion"><param name="majorVersion">6</param><param name="minorVersion">0</param></condition>
+        </conditions>
+        <link linkId="datacollector-configuration">/secure/DataCollectorConfiguration.jspa</link>
+    </web-item>
+    <web-item key="datacollector-configuration_jira6" name="Configure Datacollecor Plug-In" section="admin_system_menu/top_system_section" weight="95">
+        <label key="datacollector.admin.conf.title"/>
+        <conditions type="AND">
+            <condition class="com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition"><param name="permission">admin</param></condition>
+            <condition class="ru.andreymarkelov.atlas.plugins.datacollector.IsAtLeastJiraVersion"><param name="majorVersion">6</param><param name="minorVersion">0</param></condition>
+        </conditions>
+        <link linkId="datacollector-configuration_jira6">/secure/DataCollectorConfiguration.jspa</link>
+    </web-item>
+
+    <webwork1 key="datacollector-general-configaction" name="Datacollector configuration action" class="java.lang.Object">
+        <description>WebWork1 for configuring plug-in</description>
         <actions>
-            <action name="ru.andreymarkelov.atlas.plugins.datacollector.customfield.StatusesDataEditConfiguration" alias="StatusesDataEditConfiguration">
-                <view name="input">/templates/customfields/statuses-time-sum-cf/edit-config.vm</view>
+            <action name="ru.andreymarkelov.atlas.plugins.datacollector.DataCollectorConfiguration" alias="DataCollectorConfiguration">
+                <view name="input">/templates/collectoradmin/view-config.vm</view>
+                <view name="success">/templates/collectoradmin/view-config.vm</view>
+                <view name="permissionviolation">/secure/views/permissionviolation.jsp</view>
+            </action>
+        </actions>
+    </webwork1>
+
+    <webwork1 key="datacollector-field-configaction" name="Datacollector field configuration action" class="java.lang.Object">
+        <description>WebWork1 for configuring plug-ins custom fields</description>
+        <actions>
+            <action name="ru.andreymarkelov.atlas.plugins.datacollector.DataCollectorFieldConfiguration" alias="DataCollectorFieldConfiguration">
+                <view name="input">/templates/collectoradmin/edit-config.vm</view>
+                <view name="success">/templates/collectoradmin/edit-config.vm</view>
+                <view name="permissionviolation">/secure/views/permissionviolation.jsp</view>
             </action>
         </actions>
     </webwork1>

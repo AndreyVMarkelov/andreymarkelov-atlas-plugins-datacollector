@@ -1,0 +1,44 @@
+<html>
+    <head>
+        <title>$action.getText("datacollector.admin.conf.title")</title>
+        <meta name="decorator" content="admin"/>
+        $webResourceManager.requireResource("jira.webresources:global-static")
+        $webResourceManager.requireResource("jira.webresources:jira-global")
+        $webResourceManager.requireResource("com.atlassian.auiplugin:ajs")
+        $webResourceManager.requireResource("jira.webresources:autocomplete")
+        $webResourceManager.requireResourcesForContext("jira.view.issue")
+    </head>
+    <body class="aui">
+        <h2>$action.getText("datacollector.admin.conf.title")</h2>
+        <br/>
+        <h4>$action.getText("datacollector.admin.conf.fields.title")</h4>
+        <input type="hidden" name="atl_token" id="atl_token" value="$action.getXsrfToken()"/>
+        <table width="100%" class="collector-gridtable">
+            <thead>
+                <tr>
+                    <th width="25%" class="collector-gridtable">$action.getText("datacollector.admin.conf.fields.name")</th>
+                    <th width="25%" class="collector-gridtable">$action.getText("datacollector.admin.conf.fields.statuses")</th>
+                    <th width="25%" class="collector-gridtable">$action.getText("datacollector.admin.conf.fields.approve")</th>
+                    <th width="25%" class="collector-gridtable">$action.getText("datacollector.admin.conf.fields.actions")</th>
+                </tr>
+            </thead>
+            <tbody>
+            #foreach($data in $action.getDatas())
+                <tr>
+                    <td width="25%" class="collector-gridtable">$!data.getCfName()</td>
+                    <td width="25%" class="collector-gridtable">
+                        #foreach($status in $!data.getStatuses())
+                        <p>$action.renderStatus($status)</p>
+                        #end
+                    </td>
+                    <td width="25%" class="collector-gridtable">
+                        #if($!data.getApproveTime() > 0)$!data.getApproveTime()#end
+                    </td>
+                    <td width="25%" class="collector-gridtable">
+                        <a href="DataCollectorFieldConfiguration!default.jspa?currentField=$data.getCfId()">$action.getText("datacollector.admin.conf.fields.actions.configure")</a>
+                    </td>
+                </tr>
+            #end
+        </table>
+    </body>
+</html>
